@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 
 class Settings:
-    PROJECT_NAME: str = "ERP Project Backend"
+    PROJECT_NAME: str = "Caeina Project Backend"
 
     # Carrega o arquivo .env
     load_dotenv()
