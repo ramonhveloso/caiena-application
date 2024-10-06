@@ -23,7 +23,6 @@ class PostSignUpRequest(BaseModel):
     name: str
     cpf: Optional[str] = None
     cnpj: Optional[str] = None
-    chave_pix: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -41,8 +40,6 @@ class PostSignUpResponse(BaseModel):
     name: str
     cpf: Optional[str] = None
     cnpj: Optional[str] = None
-    chave_pix: Optional[str] = None
-
     class Config:
         from_attributes = True
 
@@ -158,7 +155,6 @@ class GetAuthMeResponse(BaseModel):
     name: str
     cpf: Optional[str] = None
     cnpj: Optional[str] = None
-    chave_pix: Optional[str] = None
 
     class Config:
         from_attributes = True

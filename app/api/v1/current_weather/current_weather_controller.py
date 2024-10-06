@@ -27,8 +27,7 @@ weather_service = CurrentWeatherService(
 
 @router.get("/current/coordinates")
 async def get_weather_current_by_city(
-    authuser: Annotated[AuthUser, Security(jwt_middleware)],
-    coordinates: CoordinatesRequest = Depends(),
+    authuser: Annotated[AuthUser, Security(jwt_middleware)],    coordinates: CoordinatesRequest = Depends(),
     db: AsyncSession = Depends(get_db),
 ) -> GetWeatherCurrentResponse:
     response_service = await weather_service.get_current_weather_by_coordinates(

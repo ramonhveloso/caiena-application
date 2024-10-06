@@ -2,7 +2,6 @@ import random
 from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
 from app.api.v1.auth.auth_schemas import PostSignUpRequest
 from app.core.security import decode_access_token
@@ -11,7 +10,7 @@ from app.database.models.user import User
 
 
 class AuthRepository:
-    async def create_user(self, db: Session, data: PostSignUpRequest):
+    async def create_user(self, db: AsyncSession, data: PostSignUpRequest):
         db_user = User(
             username=data.username,
             password=data.password,
@@ -19,7 +18,6 @@ class AuthRepository:
             email=data.email,
             cpf=data.cpf,
             cnpj=data.cnpj,
-            chave_pix=data.chave_pix,
             is_active=True,
         )
         db.add(db_user)

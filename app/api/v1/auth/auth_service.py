@@ -32,8 +32,9 @@ class AuthService:
     ) -> PostSignUpResponse:
         hashed_password = get_password_hash(password=data.password)
         data.password = hashed_password
+        response_repository = await self.auth_repository.create_user(db, data)
         try:
-            response_repository = await self.auth_repository.create_user(db, data)
+            pass
         except:
             raise HTTPException(status_code=409, detail=f"Conflict")
 
@@ -43,7 +44,6 @@ class AuthService:
             name=response_repository.name,
             cpf=response_repository.cpf,
             cnpj=response_repository.cnpj,
-            chave_pix=response_repository.chave_pix,
         )
 
     async def authenticate_user(
@@ -145,7 +145,6 @@ class AuthService:
             name=user.name,
             cpf=user.cpf,
             cnpj=user.cnpj,
-            chave_pix=user.chave_pix,
         )
 
     def verify_token(self, token: str):
