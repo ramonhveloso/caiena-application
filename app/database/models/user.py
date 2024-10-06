@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
 
 from app.database.base import Base
 
@@ -18,3 +19,7 @@ class User(Base):
     is_superuser = Column(Boolean, default=False)
     reset_pin = Column(String, nullable=True)
     reset_pin_expiration = Column(DateTime, nullable=True)
+
+    # Relacionamento com a tabela CurrentWeather e ForecastWeather
+    current_weather = relationship("CurrentWeather", back_populates="user")
+    forecast_weather = relationship("ForecastWeather", back_populates="user")
