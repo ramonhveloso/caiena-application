@@ -1,6 +1,8 @@
 from datetime import datetime
-from pydantic import BaseModel
 from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 class WeatherDescription(BaseModel):
     main: str
@@ -55,7 +57,6 @@ class Coordinates(BaseModel):
 
     class Config:
         from_attributes = True
-
 
 
 class GetCurrentWeatherResponse(BaseModel):
@@ -139,7 +140,6 @@ class WeatherDataSchema(BaseModel):
         from_attributes = True
 
 
-
 class CityData(BaseModel):
     id: int
     name: str
@@ -152,7 +152,6 @@ class CityData(BaseModel):
 
     class Config:
         from_attributes = True
-
 
 
 class WeatherForecastResponseSchema(BaseModel):

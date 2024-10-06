@@ -2,6 +2,7 @@ import random
 from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.api.v1.auth.auth_schemas import PostSignUpRequest
 from app.core.security import decode_access_token
@@ -10,7 +11,7 @@ from app.database.models.user import User
 
 
 class AuthRepository:
-    async def create_user(self, db: AsyncSession, data: PostSignUpRequest):
+    async def create_user(self, db: Session, data: PostSignUpRequest):
         db_user = User(
             username=data.username,
             password=data.password,
@@ -58,7 +59,9 @@ class AuthRepository:
     def generate_pin(self):
         return "".join([str(random.randint(0, 9)) for _ in range(6)])
 
-    async def save_pin(self, db: AsyncSession, user_id: int, pin: str, expiration: datetime):
+    async def save_pin(
+        self, db: AsyncSession, user_id: int, pin: str, expiration: datetime
+    ):
         user = db.query(User).filter(User.id == user_id).first()
         user.reset_pin = pin  # type: ignore
         user.reset_pin_expiration = expiration  # type: ignore

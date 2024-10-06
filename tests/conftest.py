@@ -9,7 +9,6 @@ from app.database.base import Base
 from app.main import app
 from app.middleware.dependencies import get_db
 
-
 DATABASE_URL = os.getenv("TEST_DATABASE_URL")
 if DATABASE_URL is None:
     raise ValueError("TEST_DATABASE_URL não está configurado")
@@ -18,6 +17,7 @@ engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base.metadata.create_all(bind=engine)
+
 
 @pytest.fixture(scope="function")
 def db_session():

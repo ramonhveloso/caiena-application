@@ -12,4 +12,3 @@ class Environment(BaseModel):
     SMTP_PORT: int
     SMTP_USERNAME: str
     SMTP_PASSWORD: str
-    

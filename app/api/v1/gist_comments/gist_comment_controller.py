@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.v1.gist_comments.gist_comment_repository import GistCommentRepository
 from app.api.v1.gist_comments.gist_comment_schemas import (
     CoordinatesRequest,
-    GistCommentResponse, 
+    GistCommentResponse,
 )
 from app.api.v1.gist_comments.gist_comment_service import CommentService
 from app.clients.http_client import HttpClient
@@ -14,7 +14,9 @@ from app.clients.open_weather.open_weather_client import OpenWeatherClient
 from app.middleware.dependencies import AuthUser, get_db, jwt_middleware
 
 router = APIRouter()
-weather_service = CommentService(GistCommentRepository(), OpenWeatherClient(HttpClient()))
+weather_service = CommentService(
+    GistCommentRepository(), OpenWeatherClient(HttpClient())
+)
 
 
 # Obter clima atual
@@ -24,8 +26,11 @@ async def post_weather_current_by_city(
     coordinates: CoordinatesRequest = Depends(),
     db: AsyncSession = Depends(get_db),
 ) -> GistCommentResponse:
-    response_service = await weather_service.post_gist_comment_by_coordinates(authuser=authuser, db=db, coordinates=coordinates)
+    response_service = await weather_service.post_gist_comment_by_coordinates(
+        authuser=authuser, db=db, coordinates=coordinates
+    )
     return GistCommentResponse.model_validate(response_service)
+
 
 # # Obter clima atual
 # @router.post("/current/{city}")
@@ -58,7 +63,7 @@ async def post_weather_current_by_city(
 # ) -> PutWeatherCurrentResponse:
 #     response_service = await weather_service.update_gist_comment(
 #         db=db, weather_id=id, data=data
-#     )   
+#     )
 #     return PutWeatherCurrentResponse.model_validate(response_service)
 
 

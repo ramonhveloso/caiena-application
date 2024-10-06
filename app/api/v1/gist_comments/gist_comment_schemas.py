@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from datetime import datetime
+
+from pydantic import BaseModel
 
 
 class CreateGistCommentRequest(BaseModel):
@@ -9,7 +10,7 @@ class CreateGistCommentRequest(BaseModel):
     forecast_day_1_date: str
     forecast_day_1_temperature: float
     forecast_day_2_date: str
-    forecast_day_2_temperature: float 
+    forecast_day_2_temperature: float
     forecast_day_3_date: str
     forecast_day_3_temperature: float
     forecast_day_4_date: str

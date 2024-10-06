@@ -1,14 +1,15 @@
-from typing import List
-from pydantic import BaseModel
 from datetime import datetime
-    
+from typing import List
+
+from pydantic import BaseModel
+
 
 class CoordinatesRequest(BaseModel):
     latitude: float
     longitude: float
 
 
-class GetWeatherForecastResponse(BaseModel): 
+class GetWeatherForecastResponse(BaseModel):
     id: int
     city: str
     latitude: float
@@ -30,7 +31,7 @@ class GetWeatherForecastResponse(BaseModel):
         if isinstance(data, cls):
             data = data.model_dump()
         return cls(**data)
-    
+
 
 class PutWeatherForecastResponse(GetWeatherForecastResponse):
     pass
@@ -60,15 +61,15 @@ class CreateForecastWeatherRequest(BaseModel):
         if isinstance(data, cls):
             data = data.model_dump()
         return cls(**data)
-    
+
 
 class PutWeatherForecastRequest(CreateForecastWeatherRequest):
     id: int
-    
+
 
 class CreateForecastWeatherResponse(GetWeatherForecastResponse):
     pass
-    
+
 
 class GetAllWeatherForecastResponse(BaseModel):
 

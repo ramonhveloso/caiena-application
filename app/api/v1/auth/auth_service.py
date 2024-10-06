@@ -46,7 +46,9 @@ class AuthService:
             chave_pix=response_repository.chave_pix,
         )
 
-    async def authenticate_user(self, db: AsyncSession, data: OAuth2PasswordRequestForm):
+    async def authenticate_user(
+        self, db: AsyncSession, data: OAuth2PasswordRequestForm
+    ):
         db_user = await self.auth_repository.get_user_by_email(db, data.username)
         if db_user and verify_password(data.password, db_user.password):
             return db_user
@@ -131,7 +133,9 @@ class AuthService:
         await self.auth_repository.update_password(db, authuser.email, hashed_password)
         return PutChangePasswordResponse(message="Password changed successfully")
 
-    async def get_authenticated_user(self, id: int, db: AsyncSession) -> GetAuthMeResponse:
+    async def get_authenticated_user(
+        self, id: int, db: AsyncSession
+    ) -> GetAuthMeResponse:
         if not id:
             raise HTTPException(status_code=401, detail="Invalid token")
         user = await self.auth_repository.get_user_by_id(db, id)

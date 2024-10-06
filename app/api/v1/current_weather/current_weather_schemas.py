@@ -1,10 +1,11 @@
-from typing import List, Optional
-from pydantic import BaseModel
 from datetime import datetime
+from typing import List, Optional
+
+from pydantic import BaseModel
 
 from app.clients.open_weather.open_weather_schemas import GetCurrentWeatherResponse
 from app.database.models.current_weather import CurrentWeather
-    
+
 
 class CoordinatesRequest(BaseModel):
     latitude: float
@@ -41,7 +42,8 @@ class GetWeatherCurrentResponse(BaseModel):
         if isinstance(data, cls):
             data = data.model_dump()
         return cls(**data)
-    
+
+
 class GetAllWeatherCurrentResponse(BaseModel):
     weathers: List[GetWeatherCurrentResponse]
 
@@ -57,9 +59,10 @@ class PutWeatherCurrentResponse(GetWeatherCurrentResponse):
 class DeleteWeatherCurrentResponse(GetWeatherCurrentResponse):
     pass
 
+
 class CreateCurrentWeatherRequest(GetCurrentWeatherResponse):
     pass
 
+
 class CreateCurrentWeatherResponse(CurrentWeather):
     pass
-    

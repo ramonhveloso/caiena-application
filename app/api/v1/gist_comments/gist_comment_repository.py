@@ -1,11 +1,18 @@
-from app.api.v1.gist_comments.gist_comment_schemas import CreateGistCommentRequest, GistCommentResponse
-from app.database.models.gist_comment import GistComment
-
 from datetime import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.v1.gist_comments.gist_comment_schemas import (
+    CreateGistCommentRequest,
+    GistCommentResponse,
+)
+from app.database.models.gist_comment import GistComment
+
+
 class GistCommentRepository:
-    async def create(self, db: AsyncSession, user_id: int, gist_comment: CreateGistCommentRequest) -> GistCommentResponse:
+    async def create(
+        self, db: AsyncSession, user_id: int, gist_comment: CreateGistCommentRequest
+    ) -> GistCommentResponse:
         gist_comment_instance = GistComment(
             city=gist_comment.name,
             latitude=gist_comment.coord.lat,
@@ -24,10 +31,10 @@ class GistCommentRepository:
             weather_description=gist_comment.weather[0].description,
             observation_datetime=datetime.fromtimestamp(gist_comment.dt),
             sunrise=datetime.fromtimestamp(gist_comment.sys.sunrise),
-            sunset=datetime.fromtimestamp(gist_comment.sys.sunset), 
-            user_id=user_id  
+            sunset=datetime.fromtimestamp(gist_comment.sys.sunset),
+            user_id=user_id,
         )
-        
+
         db.add(gist_comment_instance)
         db.commit()
         db.refresh(gist_comment_instance)
@@ -52,7 +59,7 @@ class GistCommentRepository:
             observation_datetime=gist_comment_instance.observation_datetime,
             sunrise=gist_comment_instance.sunrise,
             sunset=gist_comment_instance.sunset,
-            user_id=gist_comment_instance.user_id
+            user_id=gist_comment_instance.user_id,
         )
 
     # async def get_by_city(self, db: AsyncSession, city: str) -> list[GistComment]:
@@ -60,10 +67,10 @@ class GistCommentRepository:
 
     # async def get_all_weathers_by_user_id(self, db: AsyncSession, user_id: int):
     #     return db.query(GistComment).filter(GistComment.user_id == user_id).all()
-    
+
     # async def get_gist_comment_by_id(self, db: AsyncSession, weather_id: int):
     #     return db.query(GistComment).filter(GistComment.id == weather_id).first()
-    
+
     # async def update(self, db: AsyncSession, gist_comment: GistComment, data: PutWeatherCurrentRequest):
     #     gist_comment.city = data.city if data.city else gist_comment.city # type: ignore
     #     gist_comment.latitude = data.latitude if data.latitude else gist_comment.latitude

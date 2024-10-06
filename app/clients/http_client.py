@@ -14,7 +14,9 @@ class UnprocessableEntity(BaseModel):
 
 
 class HTTPClientException(HTTPException):
-    def __init__(self, status_code: int, details: Any, code: str = "", message: str = ""):
+    def __init__(
+        self, status_code: int, details: Any, code: str = "", message: str = ""
+    ):
         super().__init__(status_code=status_code)
         self.code = code
         self.details = details
@@ -36,12 +38,18 @@ class HttpClient:
 
                 if len(detail) == 0:
                     raise HTTPClientException(
-                        status_code=422, code="INVALID_INPUT", message="invalid input", details=""
+                        status_code=422,
+                        code="INVALID_INPUT",
+                        message="invalid input",
+                        details="",
                     )
 
                 for error in detail:
                     unprocessable_entity = UnprocessableEntity(
-                        type=error.get("type"), loc=error.get("loc"), msg=error.get("msg"), input=error.get("input")
+                        type=error.get("type"),
+                        loc=error.get("loc"),
+                        msg=error.get("msg"),
+                        input=error.get("input"),
                     )
                     unprocessable_entities.append(unprocessable_entity)
 
@@ -60,11 +68,18 @@ class HttpClient:
                 )
             elif 500 <= response.status_code < 600:
                 raise HTTPClientException(
-                    status_code=response.status_code, code="SERVER_ERROR", details="", message="Server error"
+                    status_code=response.status_code,
+                    code="SERVER_ERROR",
+                    details="",
+                    message="Server error",
                 )
         except TimeoutException as e:
             logging.error(e)
-            raise HTTPClientException(status_code=408, code="TIMEOUT", details="", message="Request timeout")
+            raise HTTPClientException(
+                status_code=408, code="TIMEOUT", details="", message="Request timeout"
+            )
         except Exception as e:
             logging.error(e)
-            raise HTTPClientException(status_code=500, code="SERVER_ERROR", details="", message="Server error")
+            raise HTTPClientException(
+                status_code=500, code="SERVER_ERROR", details="", message="Server error"
+            )
