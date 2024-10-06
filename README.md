@@ -1,20 +1,4 @@
 # BACKEND
-# End points
-
-CurrentWeather
-   POST /weather/current: Criar clima atual
-   GET /weather/current/{city}: Obter clima atual por cidade
-   GET /weather/current/user/{user_id}: Obter climas cadastrados por usuário
-   GET /weather/full/{city}: Retorna o clima atual e a previsão dos próximos 5 dias para uma cidade específica.
-   PUT /weather/current/{id}: Atualizar clima atual
-   DELETE /weather/current/{id}: Excluir clima atual
-
-ForecastWeather
-   POST /weather/forecast: Criar previsão do tempo
-   GET /weather/forecast/{city}: Obter previsão do tempo por cidade
-   GET /weather/forecast/current/{current_weather_id}: Obter previsão para um clima atual específico
-   PUT /weather/forecast/{id}: Atualizar previsão do tempo
-   DELETE /weather/forecast/{id}: Excluir previsão do tempo
 
 ## Requisitos
 
@@ -50,9 +34,12 @@ ForecastWeather
 
    `alembic upgrade head`
 
-## Executando a Aplicação
 
-`uvicorn app.main:app --reload`
+## Iniciar o Container do PostgreSQL
+
+Para iniciar o container do PostgreSQL, use:
+
+`docker run -p 5432:5432 -e POSTGRES_USER=user_name -e POSTGRES_PASSWORD=password -e POSTGRES_DB=name_database -d --name=name postgres:14.10`
 
 ## Parar o Container do PostgreSQL
 
@@ -65,6 +52,10 @@ Para parar o container do PostgreSQL, use:
 Para remover o container, use:
 
 `docker rm caiena_local`
+
+## Executando a Aplicação
+
+`uvicorn app.main:app --reload`
 
 ## Contribuição
 

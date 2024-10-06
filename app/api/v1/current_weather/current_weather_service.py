@@ -1,6 +1,5 @@
 from datetime import datetime
 from fastapi import Depends, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.current_weather.current_weather_repository import CurrentWeatherRepository
@@ -14,7 +13,6 @@ from app.api.v1.current_weather.current_weather_schemas import (
     DeleteWeatherCurrentResponse,
 )
 from app.clients.open_weather.open_weather_client import OpenWeatherClient
-from app.clients.open_weather.open_weather_schemas import GetCurrentWeatherResponse
 from app.middleware.dependencies import AuthUser
 
 
@@ -103,7 +101,7 @@ class CurrentWeatherService:
                                         user_id=int(weather.user_id))
     
     async def get_all_current_weather_by_user(
-        self, db: Session, user_id: int
+        self, db: AsyncSession, user_id: int
     ) -> GetAllWeatherCurrentResponse:
         weathers = await self.current_weather_repository.get_all_weathers_by_user_id(db, user_id)
         weathers_list = [
@@ -134,7 +132,7 @@ class CurrentWeatherService:
         return GetAllWeatherCurrentResponse(weathers=weathers_list)
 
     async def update_current_weather(
-        self, db: Session, weather_id: int, data: PutWeatherCurrentRequest
+        self, db: AsyncSession, weather_id: int, data: PutWeatherCurrentRequest
     ) -> PutWeatherCurrentResponse:
         weather = await self.current_weather_repository.get_current_weather_by_id(db, weather_id)
         if not weather:
@@ -165,13 +163,12 @@ class CurrentWeatherService:
         )
 
     async def delete_current_weather(
-        self, db: Session, weather_id: int
+        self, db: AsyncSession, weather_id: int
     ) -> DeleteWeatherCurrentResponse:
         weather = await self.current_weather_repository.get_current_weather_by_id(db, weather_id)
         if not weather:
             raise HTTPException(status_code=404, detail="Weather not found")
         
-        # Excluir registro de clima atual
         await self.current_weather_repository.delete(db, weather.id)
         return DeleteWeatherCurrentResponse(
             id=int(weather.id), 

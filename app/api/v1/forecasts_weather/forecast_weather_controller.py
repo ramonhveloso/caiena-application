@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Security
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.forecasts_weather.forecast_weather_repository import ForecastWeatherRepository
 
@@ -21,54 +21,51 @@ router = APIRouter()
 weather_service = ForecastWeatherService(ForecastWeatherRepository(), OpenWeatherClient(HttpClient()))
 
 
-# Obter clima atual
 @router.get("/forecast/coordinates")
 async def get_weather_forecast_by_coordinates(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     coordinates: CoordinatesRequest = Depends(),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> GetAllWeatherForecastResponse:
     response_service = await weather_service.get_forecast_weather_by_coordinates(authuser=authuser, db=db, coordinates=coordinates)
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
-# Obter clima atual
+
 @router.get("/forecast/coordinates/daily")
 async def get_weather_forecast_by_coordinates(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     coordinates: CoordinatesRequest = Depends(),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> GetAllWeatherForecastResponse:
     response_service = await weather_service.get_forecast_weather_daily_by_coordinates(authuser=authuser, db=db, coordinates=coordinates)
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
-# Obter clima atual
+
 @router.get("/forecast/{city}")
 async def get_weather_forecast_by_city(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     city: str,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> GetAllWeatherForecastResponse:
     response_service = await weather_service.get_forecast_weather_by_city(authuser=authuser, db=db, city=city)
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
 
-# Obter climas cadastrados por usuário
 @router.get("/forecast/user/{user_id}")
 async def get_weather_forecast_by_user(
     user_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> GetAllWeatherForecastResponse:
     response_service = await weather_service.get_all_forecast_weather_by_user(db=db, user_id=user_id)
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
 
-# Atualizar clima atual
 @router.put("/forecast/{id}")
 async def put_weather_forecast(
     id: int,
     data: PutWeatherForecastRequest,
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> PutWeatherForecastResponse:
     response_service = await weather_service.update_forecast_weather(
         db=db, weather_id=id, data=data
@@ -76,12 +73,11 @@ async def put_weather_forecast(
     return PutWeatherForecastResponse.model_validate(response_service)
 
 
-# Excluir clima atual
 @router.delete("/forecast/{id}")
 async def delete_weather_forecast(
     id: int,
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> DeleteWeatherForecastResponse:
     response_service = await weather_service.delete_forecast_weather(db=db, weather_id=id)
     return DeleteWeatherForecastResponse.model_validate(response_service)

@@ -3,7 +3,6 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_get_users_me(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -13,14 +12,12 @@ async def test_get_users_me(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Obtendo perfil do usuário autenticado
     headers = {"Authorization": f"Bearer {access_token}"}
     get_me_response = use_test_client.get("/api/v1/users/me", headers=headers)
     assert get_me_response.status_code == 200
@@ -32,7 +29,6 @@ async def test_get_users_me(use_test_client):
 
 @pytest.mark.asyncio
 async def test_put_users_me(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -42,14 +38,12 @@ async def test_put_users_me(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Atualizando perfil do usuário autenticado
     update_profile_payload = {
         "username": "devMasterUpdated",
         "email": "master_updated@dev.com",
@@ -68,7 +62,6 @@ async def test_put_users_me(use_test_client):
 
 @pytest.mark.asyncio
 async def test_get_users(use_test_client):
-    # Criando um usuário admin
     signup_payload = {
         "username": "adminUser",
         "password": "adminPass",
@@ -78,14 +71,12 @@ async def test_get_users(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário admin
     login_payload = {"username": "admin@dev.com", "password": "adminPass"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Listando usuários (admin)
     headers = {"Authorization": f"Bearer {access_token}"}
     get_users_response = use_test_client.get("/api/v1/users", headers=headers)
     assert get_users_response.status_code == 200
@@ -96,7 +87,6 @@ async def test_get_users(use_test_client):
 
 @pytest.mark.asyncio
 async def test_get_user(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -106,16 +96,14 @@ async def test_get_user(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Atualizando dados de um usuário específico
     headers = {"Authorization": f"Bearer {access_token}"}
-    # Obtendo perfil do usuário autenticado
+
     get_me_response = use_test_client.get("/api/v1/users/me", headers=headers)
     assert get_me_response.status_code == 200
 
@@ -133,7 +121,6 @@ async def test_get_user(use_test_client):
 
 @pytest.mark.asyncio
 async def test_put_user(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -143,16 +130,14 @@ async def test_put_user(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Atualizando dados de um usuário específico
     headers = {"Authorization": f"Bearer {access_token}"}
-    # Obtendo perfil do usuário autenticado
+
     get_me_response = use_test_client.get("/api/v1/users/me", headers=headers)
     assert get_me_response.status_code == 200
 
@@ -177,7 +162,6 @@ async def test_put_user(use_test_client):
 
 @pytest.mark.asyncio
 async def test_delete_user(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -187,16 +171,14 @@ async def test_delete_user(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Atualizando dados de um usuário específico
     headers = {"Authorization": f"Bearer {access_token}"}
-    # Obtendo perfil do usuário autenticado
+
     get_me_response = use_test_client.get("/api/v1/users/me", headers=headers)
     assert get_me_response.status_code == 200
 
@@ -209,6 +191,5 @@ async def test_delete_user(use_test_client):
     )
     assert delete_user_response.status_code == 200
 
-    # Verificando se o usuário foi deletado
     get_user_response = use_test_client.get(f"/api/v1/users/{user_id}", headers=headers)
     assert get_user_response.status_code == 404

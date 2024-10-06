@@ -1,6 +1,8 @@
-from sqlalchemy.orm import Session
-
-from app.api.v1.current_weather.current_weather_schemas import CreateCurrentWeatherRequest, CreateCurrentWeatherResponse, PutWeatherCurrentRequest
+from app.api.v1.current_weather.current_weather_schemas import (
+    CreateCurrentWeatherRequest, 
+    CreateCurrentWeatherResponse, 
+    PutWeatherCurrentRequest
+)
 from app.database.models.current_weather import CurrentWeather
 
 
@@ -9,18 +11,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class CurrentWeatherRepository:
     async def create(self, db: AsyncSession, user_id: int, current_weather: CreateCurrentWeatherRequest) -> CreateCurrentWeatherResponse:
-        """
-        Cria e salva um registro de clima atual no banco de dados.
-        
-        Args:
-            db (AsyncSession): Sessão ativa do banco de dados.
-            user_id (str): ID do usuário para associar o clima.
-            current_weather (CreateCurrentWeatherRequest): Objeto contendo os dados do clima a serem salvos.
-        
-        Returns:
-            CreateCurrentWeatherResponse: Instância do modelo contendo os dados salvos.
-        """
-        # Criar uma instância do modelo CurrentWeather com os dados fornecidos
         current_weather_instance = CurrentWeather(
             city=current_weather.name,
             latitude=current_weather.coord.lat,
@@ -37,18 +27,16 @@ class CurrentWeatherRepository:
             wind_gust=current_weather.wind.gust,
             cloudiness=current_weather.clouds.all,
             weather_description=current_weather.weather[0].description,
-            observation_datetime=datetime.fromtimestamp(current_weather.dt),  # Conversão de Unix timestamp para datetime
-            sunrise=datetime.fromtimestamp(current_weather.sys.sunrise),  # Conversão de Unix timestamp para datetime
-            sunset=datetime.fromtimestamp(current_weather.sys.sunset),  # Conversão de Unix timestamp para datetime
-            user_id=user_id  # Relaciona o registro ao usuário
+            observation_datetime=datetime.fromtimestamp(current_weather.dt),
+            sunrise=datetime.fromtimestamp(current_weather.sys.sunrise),
+            sunset=datetime.fromtimestamp(current_weather.sys.sunset),
+            user_id=user_id
         )
         
-        # Adiciona o objeto à sessão do banco de dados e confirma a transação
         db.add(current_weather_instance)
         db.commit()
         db.refresh(current_weather_instance)
 
-        # Retornar uma instância de CreateCurrentWeatherResponse com os dados salvos
         return CreateCurrentWeatherResponse(
             id=current_weather_instance.id,
             city=current_weather_instance.city,
@@ -72,47 +60,16 @@ class CurrentWeatherRepository:
             user_id=current_weather_instance.user_id
         )
 
-    async def get_by_city(self, db: Session, city: str) -> list[CurrentWeather]:
-        """
-        Retorna uma lista de registros de clima atual para uma cidade específica.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            city (str): Nome da cidade para buscar os registros de clima.
-        
-        Returns:
-            list[CurrentWeather]: Lista de objetos CurrentWeather com os dados encontrados.
-        """
+    async def get_by_city(self, db: AsyncSession, city: str) -> list[CurrentWeather]:
         return db.query(CurrentWeather).filter(CurrentWeather.city == city).all()
 
-    async def get_all_weathers_by_user_id(self, db: Session, user_id: int):
-        """
-        Busca todos os registros de clima atual pelo ID do usuario.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            user_id (int): ID do usuario.
-        
-        Returns:
-            CurrentWeather: Instância do modelo CurrentWeather correspondente ao ID fornecido.
-        """
+    async def get_all_weathers_by_user_id(self, db: AsyncSession, user_id: int):
         return db.query(CurrentWeather).filter(CurrentWeather.user_id == user_id).all()
     
-    async def get_current_weather_by_id(self, db: Session, weather_id: int):
-        """
-        Busca um registro específico de clima atual pelo ID.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            weather_id (int): ID do registro de clima.
-
-        Returns:
-            CurrentWeather: Instância do modelo CurrentWeather correspondente ao ID fornecido.
-        """
+    async def get_current_weather_by_id(self, db: AsyncSession, weather_id: int):
         return db.query(CurrentWeather).filter(CurrentWeather.id == weather_id).first()
     
-    async def update(self, db: Session, current_weather: CurrentWeather, data: PutWeatherCurrentRequest):
-        """Atualiza os dados de um clima específico."""
+    async def update(self, db: AsyncSession, current_weather: CurrentWeather, data: PutWeatherCurrentRequest):
         current_weather.city = data.city if data.city else current_weather.city # type: ignore
         current_weather.latitude = data.latitude if data.latitude else current_weather.latitude
         current_weather.longitude = data.longitude if data.longitude else current_weather.longitude
@@ -136,17 +93,7 @@ class CurrentWeatherRepository:
         db.refresh(current_weather)
         return current_weather
 
-    async def delete(self, db: Session, weather_id: int):
-        """
-        Exclui um registro de clima atual do banco de dados pelo ID.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            weather_id (int): ID do registro de clima a ser excluído.
-        
-        Returns:
-            None
-        """
+    async def delete(self, db: AsyncSession, weather_id: int):
         weather_entry = db.query(CurrentWeather).filter(CurrentWeather.id == weather_id).first()
         if weather_entry:
             db.delete(weather_entry)

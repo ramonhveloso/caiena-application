@@ -1,13 +1,19 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from fastapi import Depends, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.forecasts_weather.forecast_weather_repository import ForecastWeatherRepository
 
-from app.api.v1.forecasts_weather.forecast_weather_schemas import CoordinatesRequest, CreateForecastWeatherRequest, DeleteWeatherForecastResponse, GetAllWeatherForecastResponse, GetWeatherForecastResponse, PutWeatherForecastRequest, PutWeatherForecastResponse
+from app.api.v1.forecasts_weather.forecast_weather_schemas import (
+    CoordinatesRequest, 
+    CreateForecastWeatherRequest, 
+    DeleteWeatherForecastResponse, 
+    GetAllWeatherForecastResponse, 
+    GetWeatherForecastResponse, 
+    PutWeatherForecastRequest, 
+    PutWeatherForecastResponse
+)
 from app.clients.open_weather.open_weather_client import OpenWeatherClient
-from app.clients.open_weather.open_weather_schemas import GetForecastWeatherResponse
 from app.middleware.dependencies import AuthUser
 
 
@@ -93,7 +99,7 @@ class ForecastWeatherService:
         return GetAllWeatherForecastResponse(weathers=list_wather)
     
     async def get_all_forecast_weather_by_user(
-        self, db: Session, user_id: int
+        self, db: AsyncSession, user_id: int
     ) -> GetAllWeatherForecastResponse:
         weathers = await self.forecast_weather_repository.get_all_weathers_by_user_id(db, user_id)
         weathers_list = [
@@ -116,7 +122,7 @@ class ForecastWeatherService:
         return GetAllWeatherForecastResponse(weathers=weathers_list)
 
     async def update_forecast_weather(
-        self, db: Session, weather_id: int, data: PutWeatherForecastRequest
+        self, db: AsyncSession, weather_id: int, data: PutWeatherForecastRequest
     ) -> PutWeatherForecastResponse:
         weather = await self.forecast_weather_repository.get_forecast_weather_by_id(db, weather_id)
         if not weather:
@@ -139,7 +145,7 @@ class ForecastWeatherService:
         )
 
     async def delete_forecast_weather(
-        self, db: Session, weather_id: int
+        self, db: AsyncSession, weather_id: int
     ) -> DeleteWeatherForecastResponse:
         weather = await self.forecast_weather_repository.get_forecast_weather_by_id(db, weather_id)
         if not weather:

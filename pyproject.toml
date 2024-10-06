@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "caiena-application"
 version = "0.1.0"
-description = "Microserviço destinado a manipulação dos dados tomadores e prestadores"
+description = "Microserviço"
 authors = ["ramonhveloso <ramon.veloso@inovebanco.com.br>"]
 readme = "README.md"
 

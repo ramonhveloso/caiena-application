@@ -1,6 +1,8 @@
-from sqlalchemy.orm import Session
-
-from app.api.v1.forecasts_weather.forecast_weather_schemas import CreateForecastWeatherRequest, CreateForecastWeatherResponse, PutWeatherForecastRequest
+from app.api.v1.forecasts_weather.forecast_weather_schemas import (
+    CreateForecastWeatherRequest, 
+    CreateForecastWeatherResponse, 
+    PutWeatherForecastRequest
+)
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,18 +10,6 @@ from app.database.models.forecast_weather import ForecastWeather
 
 class ForecastWeatherRepository:
     async def create(self, db: AsyncSession, user_id: int, forecast_weather: CreateForecastWeatherRequest) -> CreateForecastWeatherResponse:
-        """
-        Cria e salva um registro de clima atual no banco de dados.
-        
-        Args:
-            db (AsyncSession): Sessão ativa do banco de dados.
-            user_id (str): ID do usuário para associar o clima.
-            forecast_weather (CreateForecastWeatherRequest): Objeto contendo os dados do clima a serem salvos.
-        
-        Returns:
-            CreateForecastWeatherResponse: Instância do modelo contendo os dados salvos.
-        """
-        # Criar uma instância do modelo ForecastWeather com os dados fornecidos
         forecast_weather_instance = ForecastWeather(
             city=forecast_weather.city,
             latitude=forecast_weather.latitude,
@@ -34,12 +24,10 @@ class ForecastWeatherRepository:
             user_id=user_id 
         )
         
-        # Adiciona o objeto à sessão do banco de dados e confirma a transação
         db.add(forecast_weather_instance)
         db.commit()
         db.refresh(forecast_weather_instance)
 
-        # Retornar uma instância de CreateForecastWeatherResponse com os dados salvos
         return CreateForecastWeatherResponse(
             id=forecast_weather_instance.id,
             city=forecast_weather_instance.city,
@@ -55,47 +43,16 @@ class ForecastWeatherRepository:
             user_id=forecast_weather_instance.user_id 
         )
 
-    async def get_by_city(self, db: Session, city: str) -> list[ForecastWeather]:
-        """
-        Retorna uma lista de registros de clima atual para uma cidade específica.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            city (str): Nome da cidade para buscar os registros de clima.
-        
-        Returns:
-            list[ForecastWeather]: Lista de objetos ForecastWeather com os dados encontrados.
-        """
+    async def get_by_city(self, db: AsyncSession, city: str) -> list[ForecastWeather]:
         return db.query(ForecastWeather).filter(ForecastWeather.city == city).all()
 
-    async def get_all_weathers_by_user_id(self, db: Session, user_id: int):
-        """
-        Busca todos os registros de clima atual pelo ID do usuario.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            user_id (int): ID do usuario.
-        
-        Returns:
-            ForecastWeather: Instância do modelo ForecastWeather correspondente ao ID fornecido.
-        """
+    async def get_all_weathers_by_user_id(self, db: AsyncSession, user_id: int):
         return db.query(ForecastWeather).filter(ForecastWeather.user_id == user_id).all()
     
-    async def get_forecast_weather_by_id(self, db: Session, weather_id: int):
-        """
-        Busca um registro específico de clima atual pelo ID.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            weather_id (int): ID do registro de clima.
-
-        Returns:
-            ForecastWeather: Instância do modelo ForecastWeather correspondente ao ID fornecido.
-        """
+    async def get_forecast_weather_by_id(self, db: AsyncSession, weather_id: int):
         return db.query(ForecastWeather).filter(ForecastWeather.id == weather_id).first()
     
-    async def update(self, db: Session, forecast_weather: ForecastWeather, data: PutWeatherForecastRequest):
-        """Atualiza os dados de um clima específico."""
+    async def update(self, db: AsyncSession, forecast_weather: ForecastWeather, data: PutWeatherForecastRequest):
         forecast_weather.city = data.city if data.city else forecast_weather.city # type: ignore
         forecast_weather.latitude = data.latitude if data.latitude else forecast_weather.latitude # type: ignore
         forecast_weather.longitude = data.longitude if data.longitude else forecast_weather.longitude # type: ignore
@@ -111,17 +68,7 @@ class ForecastWeatherRepository:
         db.refresh(forecast_weather)
         return forecast_weather
 
-    async def delete(self, db: Session, weather_id: int):
-        """
-        Exclui um registro de clima atual do banco de dados pelo ID.
-        
-        Args:
-            db (Session): Sessão ativa do banco de dados.
-            weather_id (int): ID do registro de clima a ser excluído.
-        
-        Returns:
-            None
-        """
+    async def delete(self, db: AsyncSession, weather_id: int):
         weather_entry = db.query(ForecastWeather).filter(ForecastWeather.id == weather_id).first()
         if weather_entry:
             db.delete(weather_entry)

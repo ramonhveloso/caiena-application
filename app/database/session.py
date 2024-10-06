@@ -4,10 +4,8 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Carrega o arquivo .env
 load_dotenv()
 
-# Pega a URL do banco de dados do arquivo .env
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL is None:

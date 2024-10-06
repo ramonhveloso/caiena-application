@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-# Pega a chave secreta da variável de ambiente
+
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 if SECRET_KEY is None:
@@ -18,21 +18,17 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Configuração do OAuth2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-# Função para verificar se a senha em texto puro é equivalente à senha hash armazenada
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-# Função para gerar um hash da senha
 def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-# Função para criar um token de acesso JWT
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -43,17 +39,13 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         )
     to_encode.update({"exp": expire})
 
-    # Gera o token JWT utilizando a SECRET_KEY
     encoded_jwt = jwt.encode(to_encode, str(SECRET_KEY), algorithm=ALGORITHM)
     return encoded_jwt
 
 
-# Função para decodificar e validar um token JWT
 def decode_access_token(token: str):
     try:
-        # Certifique-se de passar o algoritmo como uma lista
         payload = jwt.decode(token, str(SECRET_KEY), algorithms=[ALGORITHM])
         return payload
     except JWTError:
-        # Se houver um erro na decodificação, lança uma exceção de autenticação inválida
         raise HTTPException(status_code=401, detail="Invalid token or expired token")

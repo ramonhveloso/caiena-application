@@ -10,7 +10,6 @@ class OpenWeatherClient:
         environment = validate_variables(Environment)
         self.current_weather_url = f"{str(environment.OPEN_WEATHER_URL)}weather"
         self.forrest_weather_url = f"{str(environment.OPEN_WEATHER_URL)}forecast"
-        self.forrest_weather_daily_url = f"{str(environment.OPEN_WEATHER_URL)}onecall"
         self.secret_key_open_weather = environment.SECRET_KEY_OPEN_WEATHER
         self.http_client = http_client
 

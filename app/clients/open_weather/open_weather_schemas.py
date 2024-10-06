@@ -6,6 +6,10 @@ class WeatherDescription(BaseModel):
     main: str
     description: str
 
+    class Config:
+        from_attributes = True
+
+
 class MainWeather(BaseModel):
     temp: float
     feels_like: float
@@ -16,42 +20,45 @@ class MainWeather(BaseModel):
     sea_level: Optional[int] = None
     grnd_level: Optional[int] = None
 
+    class Config:
+        from_attributes = True
+
+
 class Wind(BaseModel):
     speed: float
     deg: int
     gust: Optional[float] = None
 
+    class Config:
+        from_attributes = True
+
+
 class Clouds(BaseModel):
     all: int
+
+    class Config:
+        from_attributes = True
+
 
 class Sys(BaseModel):
     country: str
     sunrise: int
     sunset: int
 
+    class Config:
+        from_attributes = True
+
+
 class Coordinates(BaseModel):
     lon: float
     lat: float
 
-
-class GetCurrentWeatherResponse(BaseModel):
-    coord: Coordinates
-    weather: List[WeatherDescription]
-    main: MainWeather
-    visibility: Optional[int] = None
-    wind: Wind
-    clouds: Clouds
-    dt: int
-    sys: Sys
-    timezone: int
-    id: int
-    name: str
-    cod: int
-
     class Config:
         from_attributes = True
 
-class GetForecastWeatherResponse(BaseModel):
+
+
+class GetCurrentWeatherResponse(BaseModel):
     coord: Coordinates
     weather: List[WeatherDescription]
     main: MainWeather
@@ -80,22 +87,42 @@ class MainSchema(BaseModel):
     humidity: int
     temp_kf: Optional[float]
 
+    class Config:
+        from_attributes = True
+
+
 class WeatherSchema(BaseModel):
     id: int
     main: str
     description: str
     icon: str
 
+    class Config:
+        from_attributes = True
+
+
 class CloudsSchema(BaseModel):
     all: int
+
+    class Config:
+        from_attributes = True
+
 
 class WindSchema(BaseModel):
     speed: float
     deg: int
     gust: Optional[float]
 
+    class Config:
+        from_attributes = True
+
+
 class SysSchema(BaseModel):
     pod: str
+
+    class Config:
+        from_attributes = True
+
 
 class WeatherDataSchema(BaseModel):
     dt: datetime
@@ -108,6 +135,10 @@ class WeatherDataSchema(BaseModel):
     sys: SysSchema
     dt_txt: str
 
+    class Config:
+        from_attributes = True
+
+
 
 class CityData(BaseModel):
     id: int
@@ -118,6 +149,10 @@ class CityData(BaseModel):
     timezone: int
     sunrise: int
     sunset: int
+
+    class Config:
+        from_attributes = True
+
 
 
 class WeatherForecastResponseSchema(BaseModel):

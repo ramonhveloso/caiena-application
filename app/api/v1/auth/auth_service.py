@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.auth.auth_repository import AuthRepository
 from app.api.v1.auth.auth_schemas import (
@@ -28,14 +28,13 @@ class AuthService:
         self.auth_repository = auth_repository
 
     async def create_user(
-        self, db: Session, data: PostSignUpRequest
+        self, db: AsyncSession, data: PostSignUpRequest
     ) -> PostSignUpResponse:
         hashed_password = get_password_hash(password=data.password)
         data.password = hashed_password
         try:
             response_repository = await self.auth_repository.create_user(db, data)
         except:
-            # Lança uma exceção HTTP com status 409 se ocorrer um erro específico
             raise HTTPException(status_code=409, detail=f"Conflict")
 
         return PostSignUpResponse(
@@ -47,8 +46,7 @@ class AuthService:
             chave_pix=response_repository.chave_pix,
         )
 
-    async def authenticate_user(self, db: Session, data: OAuth2PasswordRequestForm):
-        # Autenticar o usuário com e-mail e senha
+    async def authenticate_user(self, db: AsyncSession, data: OAuth2PasswordRequestForm):
         db_user = await self.auth_repository.get_user_by_email(db, data.username)
         if db_user and verify_password(data.password, db_user.password):
             return db_user
@@ -59,7 +57,6 @@ class AuthService:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     def create_access_token(self, user) -> PostLoginResponse:
-        # Criar token de acesso para o usuário
         token_data = {"id": user.id, "email": user.email}
         response = {
             "access_token": create_access_token(token_data),
@@ -67,53 +64,42 @@ class AuthService:
         }
         return PostLoginResponse(**response)
 
-    async def logout(self, db: Session, authuser: AuthUser) -> PostLogoutResponse:
-        # Logout do usuário, adicionando o token à blacklist
+    async def logout(self, db: AsyncSession, authuser: AuthUser) -> PostLogoutResponse:
         if authuser.token is None:
             raise HTTPException(status_code=400, detail="Invalid token")
         await self.auth_repository.add_token(db, authuser.token)
         return PostLogoutResponse(message="Successfully logged out")
 
-    async def is_token_blacklisted(self, db: Session, token: str) -> bool:
-        """Verifica se um token está na blacklist."""
+    async def is_token_blacklisted(self, db: AsyncSession, token: str) -> bool:
         token_id = self.auth_repository.verify_token(token)
         if token_id is None:
             raise HTTPException(status_code=400, detail="Invalid token")
         return await self.auth_repository.is_token_blacklisted(db, str(token_id))
 
     async def forgot_password(
-        self, db: Session, data: PostForgotPasswordRequest
+        self, db: AsyncSession, data: PostForgotPasswordRequest
     ) -> PostForgotPasswordResponse:
-        # Envia email com o pin para reset de senha
         user = await self.auth_repository.get_user_by_email(db, data.email)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        # Gerar PIN de 6 dígitos
         pin = self.auth_repository.generate_pin()
-
-        # Define o tempo de expiração do PIN
         pin_expiration = datetime.now() + timedelta(minutes=5)
 
-        # Armazena o PIN e sua expiração no banco de dados
         await self.auth_repository.save_pin(db, user.id, pin, pin_expiration)
 
-        # Enviar o PIN por e-mail
         await send_pin_email(user.email, pin)
 
         return PostForgotPasswordResponse(message="PIN sent to email")
 
     async def reset_password(
-        self, data: PostResetPasswordRequest, db: Session
+        self, data: PostResetPasswordRequest, db: AsyncSession
     ) -> PostResetPasswordResponse:
-        # Verificar se o PIN é válido
         pin_validation_result = await self.auth_repository.verify_pin(
             db=db, email=data.email, pin=data.pin
         )
 
-        # Verifica o resultado da validação do PIN
         if "error" in pin_validation_result:
-            # Lança a exceção apropriada com base na mensagem de erro
             error_detail = pin_validation_result["error"]
 
             if error_detail == "Invalid PIN":
@@ -127,18 +113,15 @@ class AuthService:
             elif error_detail == "User not found":
                 raise HTTPException(status_code=404, detail="User not found.")
 
-        # Se o PIN for válido, hash a nova senha
         hashed_password = get_password_hash(data.new_password)
 
-        # Atualizar a senha no repositório
         await self.auth_repository.update_password(db, data.email, hashed_password)
 
         return PostResetPasswordResponse(message="Password reset successfully.")
 
     async def change_password(
-        self, authuser: AuthUser, data: PutChangePasswordRequest, db: Session
+        self, authuser: AuthUser, data: PutChangePasswordRequest, db: AsyncSession
     ) -> PutChangePasswordResponse:
-        # Alterar a senha do usuário autenticado
         user = await self.auth_repository.get_user_by_id(db, authuser.id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -148,8 +131,7 @@ class AuthService:
         await self.auth_repository.update_password(db, authuser.email, hashed_password)
         return PutChangePasswordResponse(message="Password changed successfully")
 
-    async def get_authenticated_user(self, id: int, db: Session) -> GetAuthMeResponse:
-        # Obter informações do usuário autenticado com base no token
+    async def get_authenticated_user(self, id: int, db: AsyncSession) -> GetAuthMeResponse:
         if not id:
             raise HTTPException(status_code=401, detail="Invalid token")
         user = await self.auth_repository.get_user_by_id(db, id)
@@ -163,5 +145,4 @@ class AuthService:
         )
 
     def verify_token(self, token: str):
-        # Verificar token
         return self.auth_repository.verify_token(token)

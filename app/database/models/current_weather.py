@@ -4,14 +4,6 @@ from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 
 from app.database.base import Base
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-from datetime import datetime
-
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-from datetime import datetime
-
 
 class CurrentWeather(Base):
     __tablename__ = 'current_weather'
@@ -36,6 +28,6 @@ class CurrentWeather(Base):
     sunrise = Column(DateTime, nullable=False)
     sunset = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    
+
     user = relationship("User", back_populates="current_weather")
 

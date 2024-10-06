@@ -5,7 +5,6 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_post_signup(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -18,7 +17,6 @@ async def test_post_signup(use_test_client):
 
 @pytest.mark.asyncio
 async def test_post_login(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -28,7 +26,6 @@ async def test_post_login(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
@@ -40,7 +37,6 @@ async def test_post_login(use_test_client):
 
 @pytest.mark.asyncio
 async def test_post_logout(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -50,14 +46,12 @@ async def test_post_logout(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Realizando o logout
     headers = {"Authorization": f"Bearer {access_token}"}
     logout_response = use_test_client.post("/api/v1/auth/logout", headers=headers)
     assert logout_response.status_code == 200
@@ -71,7 +65,6 @@ async def test_post_logout(use_test_client):
 async def test_post_forgot_password(mock_send_pin_email, use_test_client):
     mock_send_pin_email.return_value = None
 
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -81,7 +74,6 @@ async def test_post_forgot_password(mock_send_pin_email, use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Solicitando recuperação de senha
     forgot_password_payload = {"email": "master@dev.com"}
     forgot_password_response = use_test_client.post(
         "/api/v1/auth/forgot-password", json=forgot_password_payload
@@ -101,7 +93,6 @@ async def test_post_reset_password(
     mock_send_pin_email.return_value = None
     mock_generate_pin.return_value = "123456"
 
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -111,7 +102,6 @@ async def test_post_reset_password(
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Solicitando recuperação de senha
     forgot_password_payload = {"email": "master@dev.com"}
     forgot_password_response = use_test_client.post(
         "/api/v1/auth/forgot-password", json=forgot_password_payload
@@ -121,7 +111,6 @@ async def test_post_reset_password(
     response_json = forgot_password_response.json()
     assert response_json["message"] == "PIN sent to email"
 
-    # Resetando a senha
     reset_password_payload = {
         "email": "master@dev.com",
         "pin": "123456",
@@ -138,7 +127,6 @@ async def test_post_reset_password(
 
 @pytest.mark.asyncio
 async def test_put_change_password(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -148,14 +136,12 @@ async def test_put_change_password(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Alterando a senha
     change_password_payload = {"old_password": "jujuba", "new_password": "nova_senha"}
     headers = {"Authorization": f"Bearer {access_token}"}
     change_password_response = use_test_client.put(
@@ -169,7 +155,6 @@ async def test_put_change_password(use_test_client):
 
 @pytest.mark.asyncio
 async def test_get_me(use_test_client):
-    # Criando um usuário
     signup_payload = {
         "username": "devMaster",
         "password": "jujuba",
@@ -179,14 +164,12 @@ async def test_get_me(use_test_client):
     signup_response = use_test_client.post("/api/v1/auth/signup", json=signup_payload)
     assert signup_response.status_code == 201
 
-    # Logando com o usuário criado
     login_payload = {"username": "master@dev.com", "password": "jujuba"}
     login_response = use_test_client.post("/api/v1/auth/login", data=login_payload)
     assert login_response.status_code == 200
 
     access_token = login_response.json()["access_token"]
 
-    # Verificando dados do usuário autenticado
     headers = {"Authorization": f"Bearer {access_token}"}
     get_me_response = use_test_client.get("/api/v1/auth/me", headers=headers)
     assert get_me_response.status_code == 200
