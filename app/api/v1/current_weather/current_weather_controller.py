@@ -7,7 +7,6 @@ from app.api.v1.current_weather.current_weather_repository import (
     CurrentWeatherRepository,
 )
 from app.api.v1.current_weather.current_weather_schemas import (
-    CoordinatesRequest,
     DeleteWeatherCurrentResponse,
     GetAllWeatherCurrentResponse,
     GetWeatherCurrentResponse,
@@ -17,6 +16,7 @@ from app.api.v1.current_weather.current_weather_schemas import (
 from app.api.v1.current_weather.current_weather_service import CurrentWeatherService
 from app.clients.http_client import HttpClient
 from app.clients.open_weather.open_weather_client import OpenWeatherClient
+from app.clients.open_weather.open_weather_schemas import CoordinatesRequest
 from app.middleware.dependencies import AuthUser, get_db, jwt_middleware
 
 router = APIRouter()
@@ -26,8 +26,9 @@ weather_service = CurrentWeatherService(
 
 
 @router.get("/coordinates")
-async def get_weather_current_by_city(
-    authuser: Annotated[AuthUser, Security(jwt_middleware)],    coordinates: CoordinatesRequest = Depends(),
+async def get_weather_current_by_coordinates(
+    authuser: Annotated[AuthUser, Security(jwt_middleware)],
+    coordinates: CoordinatesRequest = Depends(),
     db: AsyncSession = Depends(get_db),
 ) -> GetWeatherCurrentResponse:
     response_service = await weather_service.get_current_weather_by_coordinates(

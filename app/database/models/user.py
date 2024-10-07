@@ -22,4 +22,4 @@ class User(Base):
     # Relacionamento com a tabela CurrentWeather e ForecastWeather
     current_weather = relationship("CurrentWeather", back_populates="user")
     forecast_weather = relationship("ForecastWeather", back_populates="user")
-    gist_comments= relationship("GistComment", back_populates="user")
+    gist_comments = relationship("GistComment", back_populates="user")

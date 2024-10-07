@@ -7,7 +7,6 @@ from app.api.v1.forecasts_weather.forecast_weather_repository import (
     ForecastWeatherRepository,
 )
 from app.api.v1.forecasts_weather.forecast_weather_schemas import (
-    CoordinatesRequest,
     DeleteWeatherForecastResponse,
     GetAllWeatherForecastResponse,
     PutWeatherForecastRequest,
@@ -16,6 +15,7 @@ from app.api.v1.forecasts_weather.forecast_weather_schemas import (
 from app.api.v1.forecasts_weather.forecast_weather_service import ForecastWeatherService
 from app.clients.http_client import HttpClient
 from app.clients.open_weather.open_weather_client import OpenWeatherClient
+from app.clients.open_weather.open_weather_schemas import CoordinatesRequest
 from app.middleware.dependencies import AuthUser, get_db, jwt_middleware
 
 router = APIRouter()
@@ -31,18 +31,6 @@ async def get_weather_forecast_by_coordinates(
     db: AsyncSession = Depends(get_db),
 ) -> GetAllWeatherForecastResponse:
     response_service = await weather_service.get_forecast_weather_by_coordinates(
-        authuser=authuser, db=db, coordinates=coordinates
-    )
-    return GetAllWeatherForecastResponse.model_validate(response_service)
-
-
-@router.get("/coordinates/daily")
-async def get_weather_forecast_by_coordinates(
-    authuser: Annotated[AuthUser, Security(jwt_middleware)],
-    coordinates: CoordinatesRequest = Depends(),
-    db: AsyncSession = Depends(get_db),
-) -> GetAllWeatherForecastResponse:
-    response_service = await weather_service.get_forecast_weather_daily_by_coordinates(
         authuser=authuser, db=db, coordinates=coordinates
     )
     return GetAllWeatherForecastResponse.model_validate(response_service)

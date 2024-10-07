@@ -4,11 +4,6 @@ from typing import List
 from pydantic import BaseModel
 
 
-class CoordinatesRequest(BaseModel):
-    latitude: float
-    longitude: float
-
-
 class GetWeatherForecastResponse(BaseModel):
     id: int
     city: str
@@ -41,7 +36,6 @@ class PutWeatherForecastResponse(BaseModel):
 class DeleteWeatherForecastResponse(BaseModel):
     message: str
     response: GetWeatherForecastResponse
-
 
 
 class CreateForecastWeatherRequest(BaseModel):

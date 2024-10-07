@@ -7,11 +7,6 @@ from app.clients.open_weather.open_weather_schemas import GetCurrentWeatherRespo
 from app.database.models.current_weather import CurrentWeather
 
 
-class CoordinatesRequest(BaseModel):
-    latitude: float
-    longitude: float
-
-
 class GetWeatherCurrentResponse(BaseModel):
     id: int
     city: str

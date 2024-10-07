@@ -30,11 +30,6 @@ class GistCommentResponse(CreateGistCommentRequest):
     comment_date: datetime
 
 
-class CoordinatesRequest(BaseModel):
-    latitude: float
-    longitude: float
-
-
 class GetAllGistCommentResponse(BaseModel):
     comments: list[GistCommentResponse]
 

@@ -7,7 +7,6 @@ from app.api.v1.current_weather.current_weather_repository import (
     CurrentWeatherRepository,
 )
 from app.api.v1.current_weather.current_weather_schemas import (
-    CoordinatesRequest,
     CreateCurrentWeatherRequest,
     DeleteWeatherCurrentResponse,
     GetAllWeatherCurrentResponse,
@@ -16,6 +15,7 @@ from app.api.v1.current_weather.current_weather_schemas import (
     PutWeatherCurrentResponse,
 )
 from app.clients.open_weather.open_weather_client import OpenWeatherClient
+from app.clients.open_weather.open_weather_schemas import CoordinatesRequest
 from app.middleware.dependencies import AuthUser
 
 
@@ -110,7 +110,7 @@ class CurrentWeatherService:
         )
         if not weathers:
             raise HTTPException(status_code=404, detail="Weather not found")
-        
+
         weathers_list = [
             GetWeatherCurrentResponse(
                 id=int(weather.id),
@@ -168,7 +168,9 @@ class CurrentWeatherService:
                 visibility=int(updated_weather.visibility),
                 wind_speed=float(updated_weather.wind_speed),
                 wind_deg=int(updated_weather.wind_deg),
-                wind_gust=float(updated_weather.wind_gust) if weather.wind_gust else None,
+                wind_gust=(
+                    float(updated_weather.wind_gust) if weather.wind_gust else None
+                ),
                 cloudiness=int(updated_weather.cloudiness),
                 weather_description=str(updated_weather.weather_description),
                 observation_datetime=datetime.strptime(
@@ -177,9 +179,11 @@ class CurrentWeatherService:
                 sunrise=datetime.strptime(
                     str(updated_weather.sunrise), "%Y-%m-%d %H:%M:%S"
                 ),
-                sunset=datetime.strptime(str(updated_weather.sunset), "%Y-%m-%d %H:%M:%S"),
+                sunset=datetime.strptime(
+                    str(updated_weather.sunset), "%Y-%m-%d %H:%M:%S"
+                ),
                 user_id=int(updated_weather.user_id),
-            )
+            ),
         )
 
     async def delete_current_weather(
@@ -195,7 +199,7 @@ class CurrentWeatherService:
             await self.current_weather_repository.delete(db, weather.id)
         except Exception:
             raise HTTPException(status_code=409, detail="Error deleting weather")
-        
+
         return DeleteWeatherCurrentResponse(
             message="Current Weather deleted successfully",
             response=GetWeatherCurrentResponse(
@@ -220,6 +224,6 @@ class CurrentWeatherService:
                 ),
                 sunrise=datetime.strptime(str(weather.sunrise), "%Y-%m-%d %H:%M:%S"),
                 sunset=datetime.strptime(str(weather.sunset), "%Y-%m-%d %H:%M:%S"),
-                user_id=int(weather.user_id)
-            )
+                user_id=int(weather.user_id),
+            ),
         )

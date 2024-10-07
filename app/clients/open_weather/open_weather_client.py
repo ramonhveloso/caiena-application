@@ -1,6 +1,6 @@
-from app.api.v1.current_weather.current_weather_schemas import CoordinatesRequest
 from app.clients.http_client import HttpClient
 from app.clients.open_weather.open_weather_schemas import (
+    CoordinatesRequest,
     GetCurrentWeatherResponse,
     WeatherForecastResponseSchema,
 )

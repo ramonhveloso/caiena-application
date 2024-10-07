@@ -40,6 +40,7 @@ class PostSignUpResponse(BaseModel):
     name: str
     cpf: Optional[str] = None
     cnpj: Optional[str] = None
+
     class Config:
         from_attributes = True
 

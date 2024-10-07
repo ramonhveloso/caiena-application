@@ -4,6 +4,11 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
+class CoordinatesRequest(BaseModel):
+    latitude: float
+    longitude: float
+
+
 class WeatherDescription(BaseModel):
     main: str
     description: str

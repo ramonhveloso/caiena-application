@@ -7,8 +7,8 @@ from app.api.v1.forecasts_weather.forecast_weather_repository import (
     ForecastWeatherRepository,
 )
 from app.api.v1.forecasts_weather.forecast_weather_schemas import (
-    CoordinatesRequest,
     CreateForecastWeatherRequest,
+    CreateForecastWeatherResponse,
     DeleteWeatherForecastResponse,
     GetAllWeatherForecastResponse,
     GetWeatherForecastResponse,
@@ -16,6 +16,7 @@ from app.api.v1.forecasts_weather.forecast_weather_schemas import (
     PutWeatherForecastResponse,
 )
 from app.clients.open_weather.open_weather_client import OpenWeatherClient
+from app.clients.open_weather.open_weather_schemas import CoordinatesRequest
 from app.middleware.dependencies import AuthUser
 
 
@@ -38,41 +39,7 @@ class ForecastWeatherService:
         )
         if not response_client:
             raise HTTPException(status_code=404, detail="Weather not found")
-        
-        city = response_client.city.name
-        latitude = response_client.city.coord.lat
-        longitude = response_client.city.coord.lon
-        list_wather = []
-        for weather_data in response_client.list:
-            forecast_weather = CreateForecastWeatherRequest(
-                city=city,
-                latitude=latitude,
-                longitude=longitude,
-                date=weather_data.dt,
-                average_temperature=weather_data.main.temp,
-                min_temperature=weather_data.main.temp_min,
-                max_temperature=weather_data.main.temp_max,
-                weather_description=weather_data.weather[0].description,
-                humidity=weather_data.main.humidity,
-                wind_speed=weather_data.wind.speed,
-            )
-            response_repository = await self.forecast_weather_repository.create(
-                db, authuser.id, forecast_weather
-            )
-            list_wather.append(response_repository)
-        return GetAllWeatherForecastResponse(weathers=list_wather)
 
-    async def get_forecast_weather_daily_by_coordinates(
-        self, authuser: AuthUser, db: AsyncSession, coordinates: CoordinatesRequest
-    ) -> GetAllWeatherForecastResponse:
-        response_client = (
-            await self.open_weather_client.get_forecast_weather_daily_by_coordinates(
-                coordinates=coordinates
-            )
-        )
-        if not response_client:
-            raise HTTPException(status_code=404, detail="Weather not found")
-        
         city = response_client.city.name
         latitude = response_client.city.coord.lat
         longitude = response_client.city.coord.lon
@@ -104,7 +71,7 @@ class ForecastWeatherService:
         )
         if not response_client:
             raise HTTPException(status_code=404, detail="Weather not found")
-        
+
         city = response_client.city.name
         latitude = response_client.city.coord.lat
         longitude = response_client.city.coord.lon
@@ -136,9 +103,9 @@ class ForecastWeatherService:
         )
         if not weathers:
             raise HTTPException(status_code=404, detail="Weather not found")
-        
+
         weathers_list = [
-            GetWeatherForecastResponse(
+            CreateForecastWeatherResponse(
                 id=int(weather.id),
                 city=str(weather.city),
                 latitude=float(weather.latitude),
@@ -182,8 +149,8 @@ class ForecastWeatherService:
                 weather_description=str(updated_weather.weather_description),
                 humidity=int(updated_weather.humidity),
                 wind_speed=float(updated_weather.wind_speed),
-                user_id=int(updated_weather.user_id)
-            )
+                user_id=int(updated_weather.user_id),
+            ),
         )
 
     async def delete_forecast_weather(
@@ -197,8 +164,8 @@ class ForecastWeatherService:
 
         await self.forecast_weather_repository.delete(db, weather.id)
         return DeleteWeatherForecastResponse(
-                message="Forecast Weather deleted successfully",
-                response=GetWeatherForecastResponse(
+            message="Forecast Weather deleted successfully",
+            response=GetWeatherForecastResponse(
                 id=int(weather.id),
                 city=str(weather.city),
                 latitude=float(weather.latitude),
@@ -211,5 +178,5 @@ class ForecastWeatherService:
                 humidity=int(weather.humidity),
                 wind_speed=float(weather.wind_speed),
                 user_id=int(weather.user_id),
-            )
+            ),
         )
