@@ -33,12 +33,15 @@ class GetWeatherForecastResponse(BaseModel):
         return cls(**data)
 
 
-class PutWeatherForecastResponse(GetWeatherForecastResponse):
-    pass
+class PutWeatherForecastResponse(BaseModel):
+    message: str
+    response: GetWeatherForecastResponse
 
 
-class DeleteWeatherForecastResponse(GetWeatherForecastResponse):
-    pass
+class DeleteWeatherForecastResponse(BaseModel):
+    message: str
+    response: GetWeatherForecastResponse
+
 
 
 class CreateForecastWeatherRequest(BaseModel):

@@ -52,12 +52,14 @@ class PutWeatherCurrentRequest(GetWeatherCurrentResponse):
     pass
 
 
-class PutWeatherCurrentResponse(GetWeatherCurrentResponse):
-    pass
+class PutWeatherCurrentResponse(BaseModel):
+    message: str
+    response: GetWeatherCurrentResponse
 
 
-class DeleteWeatherCurrentResponse(GetWeatherCurrentResponse):
-    pass
+class DeleteWeatherCurrentResponse(BaseModel):
+    message: str
+    response: GetWeatherCurrentResponse
 
 
 class CreateCurrentWeatherRequest(GetCurrentWeatherResponse):

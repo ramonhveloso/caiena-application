@@ -61,22 +61,6 @@ class OpenWeatherClient:
         )
         return WeatherForecastResponseSchema(**response.json())
 
-    async def get_forecast_weather_daily_by_coordinates(
-        self, coordinates: CoordinatesRequest
-    ) -> WeatherForecastResponseSchema:
-        response = await self.http_client.make_request(
-            self.forrest_weather_daily_url,
-            "GET",
-            params={
-                "lat": coordinates.latitude,
-                "lon": coordinates.longitude,
-                "appid": self.secret_key_open_weather,
-                "units": "metric",
-                "lang": "pt_br",
-            },
-        )
-        return WeatherForecastResponseSchema(**response.json())
-
     async def get_forecast_weather_by_city(
         self, city: str
     ) -> WeatherForecastResponseSchema:

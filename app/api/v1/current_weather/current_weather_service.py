@@ -36,20 +36,7 @@ class CurrentWeatherService:
                 coordinates=coordinates
             )
         )
-        current_weather = CreateCurrentWeatherRequest(
-            coord=response_client.coord,
-            weather=response_client.weather,
-            main=response_client.main,
-            visibility=response_client.visibility,
-            wind=response_client.wind,
-            clouds=response_client.clouds,
-            dt=response_client.dt,
-            sys=response_client.sys,
-            timezone=response_client.timezone,
-            id=response_client.id,
-            name=response_client.name,
-            cod=response_client.cod,
-        )
+        current_weather = CreateCurrentWeatherRequest(**response_client.model_dump())
 
         weather = await self.current_weather_repository.create(
             db, authuser.id, current_weather
@@ -85,20 +72,7 @@ class CurrentWeatherService:
         response_client = await self.open_weather_client.get_current_weather_by_city(
             city=city
         )
-        current_weather = CreateCurrentWeatherRequest(
-            coord=response_client.coord,
-            weather=response_client.weather,
-            main=response_client.main,
-            visibility=response_client.visibility,
-            wind=response_client.wind,
-            clouds=response_client.clouds,
-            dt=response_client.dt,
-            sys=response_client.sys,
-            timezone=response_client.timezone,
-            id=response_client.id,
-            name=response_client.name,
-            cod=response_client.cod,
-        )
+        current_weather = CreateCurrentWeatherRequest(**response_client.model_dump())
 
         weather = await self.current_weather_repository.create(
             db, authuser.id, current_weather
@@ -179,30 +153,33 @@ class CurrentWeatherService:
             db, weather, data
         )
         return PutWeatherCurrentResponse(
-            id=int(updated_weather.id),
-            city=str(updated_weather.city),
-            latitude=float(updated_weather.latitude),
-            longitude=float(updated_weather.longitude),
-            current_temperature=float(updated_weather.current_temperature),
-            feels_like=float(updated_weather.feels_like),
-            temp_min=float(updated_weather.temp_min),
-            temp_max=float(updated_weather.temp_max),
-            pressure=int(updated_weather.pressure),
-            humidity=int(updated_weather.humidity),
-            visibility=int(updated_weather.visibility),
-            wind_speed=float(updated_weather.wind_speed),
-            wind_deg=int(updated_weather.wind_deg),
-            wind_gust=float(updated_weather.wind_gust) if weather.wind_gust else None,
-            cloudiness=int(updated_weather.cloudiness),
-            weather_description=str(updated_weather.weather_description),
-            observation_datetime=datetime.strptime(
-                str(updated_weather.observation_datetime), "%Y-%m-%d %H:%M:%S"
-            ),
-            sunrise=datetime.strptime(
-                str(updated_weather.sunrise), "%Y-%m-%d %H:%M:%S"
-            ),
-            sunset=datetime.strptime(str(updated_weather.sunset), "%Y-%m-%d %H:%M:%S"),
-            user_id=int(updated_weather.user_id),
+            message="Current Weather updated successfully",
+            response=GetWeatherCurrentResponse(
+                id=int(updated_weather.id),
+                city=str(updated_weather.city),
+                latitude=float(updated_weather.latitude),
+                longitude=float(updated_weather.longitude),
+                current_temperature=float(updated_weather.current_temperature),
+                feels_like=float(updated_weather.feels_like),
+                temp_min=float(updated_weather.temp_min),
+                temp_max=float(updated_weather.temp_max),
+                pressure=int(updated_weather.pressure),
+                humidity=int(updated_weather.humidity),
+                visibility=int(updated_weather.visibility),
+                wind_speed=float(updated_weather.wind_speed),
+                wind_deg=int(updated_weather.wind_deg),
+                wind_gust=float(updated_weather.wind_gust) if weather.wind_gust else None,
+                cloudiness=int(updated_weather.cloudiness),
+                weather_description=str(updated_weather.weather_description),
+                observation_datetime=datetime.strptime(
+                    str(updated_weather.observation_datetime), "%Y-%m-%d %H:%M:%S"
+                ),
+                sunrise=datetime.strptime(
+                    str(updated_weather.sunrise), "%Y-%m-%d %H:%M:%S"
+                ),
+                sunset=datetime.strptime(str(updated_weather.sunset), "%Y-%m-%d %H:%M:%S"),
+                user_id=int(updated_weather.user_id),
+            )
         )
 
     async def delete_current_weather(
@@ -220,26 +197,29 @@ class CurrentWeatherService:
             raise HTTPException(status_code=409, detail="Error deleting weather")
         
         return DeleteWeatherCurrentResponse(
-            id=int(weather.id),
-            city=str(weather.city),
-            latitude=float(weather.latitude),
-            longitude=float(weather.longitude),
-            current_temperature=float(weather.current_temperature),
-            feels_like=float(weather.feels_like),
-            temp_min=float(weather.temp_min),
-            temp_max=float(weather.temp_max),
-            pressure=int(weather.pressure),
-            humidity=int(weather.humidity),
-            visibility=int(weather.visibility),
-            wind_speed=float(weather.wind_speed),
-            wind_deg=int(weather.wind_deg),
-            wind_gust=float(weather.wind_gust) if weather.wind_gust else None,
-            cloudiness=int(weather.cloudiness),
-            weather_description=str(weather.weather_description),
-            observation_datetime=datetime.strptime(
-                str(weather.observation_datetime), "%Y-%m-%d %H:%M:%S"
-            ),
-            sunrise=datetime.strptime(str(weather.sunrise), "%Y-%m-%d %H:%M:%S"),
-            sunset=datetime.strptime(str(weather.sunset), "%Y-%m-%d %H:%M:%S"),
-            user_id=int(weather.user_id),
+            message="Current Weather deleted successfully",
+            response=GetWeatherCurrentResponse(
+                id=int(weather.id),
+                city=str(weather.city),
+                latitude=float(weather.latitude),
+                longitude=float(weather.longitude),
+                current_temperature=float(weather.current_temperature),
+                feels_like=float(weather.feels_like),
+                temp_min=float(weather.temp_min),
+                temp_max=float(weather.temp_max),
+                pressure=int(weather.pressure),
+                humidity=int(weather.humidity),
+                visibility=int(weather.visibility),
+                wind_speed=float(weather.wind_speed),
+                wind_deg=int(weather.wind_deg),
+                wind_gust=float(weather.wind_gust) if weather.wind_gust else None,
+                cloudiness=int(weather.cloudiness),
+                weather_description=str(weather.weather_description),
+                observation_datetime=datetime.strptime(
+                    str(weather.observation_datetime), "%Y-%m-%d %H:%M:%S"
+                ),
+                sunrise=datetime.strptime(str(weather.sunrise), "%Y-%m-%d %H:%M:%S"),
+                sunset=datetime.strptime(str(weather.sunset), "%Y-%m-%d %H:%M:%S"),
+                user_id=int(weather.user_id)
+            )
         )
