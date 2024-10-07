@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Security
+from fastapi import APIRouter, Depends, Security, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.forecasts_weather.forecast_weather_repository import (
@@ -24,25 +24,25 @@ weather_service = ForecastWeatherService(
 )
 
 
-@router.get("/coordinates")
-async def get_weather_forecast_by_coordinates(
+@router.post("/coordinates", status_code=status.HTTP_201_CREATED)
+async def post_weather_forecast_by_coordinates(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     coordinates: CoordinatesRequest = Depends(),
     db: AsyncSession = Depends(get_db),
 ) -> GetAllWeatherForecastResponse:
-    response_service = await weather_service.get_forecast_weather_by_coordinates(
+    response_service = await weather_service.post_forecast_weather_by_coordinates(
         authuser=authuser, db=db, coordinates=coordinates
     )
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
 
-@router.get("/{city}")
-async def get_weather_forecast_by_city(
+@router.post("/{city}", status_code=status.HTTP_201_CREATED)
+async def post_weather_forecast_by_city(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     city: str,
     db: AsyncSession = Depends(get_db),
 ) -> GetAllWeatherForecastResponse:
-    response_service = await weather_service.get_forecast_weather_by_city(
+    response_service = await weather_service.post_forecast_weather_by_city(
         authuser=authuser, db=db, city=city
     )
     return GetAllWeatherForecastResponse.model_validate(response_service)

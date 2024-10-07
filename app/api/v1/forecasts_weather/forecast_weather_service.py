@@ -29,7 +29,7 @@ class ForecastWeatherService:
         self.forecast_weather_repository = forecast_weather_repository
         self.open_weather_client = forecast_weather_client
 
-    async def get_forecast_weather_by_coordinates(
+    async def post_forecast_weather_by_coordinates(
         self, authuser: AuthUser, db: AsyncSession, coordinates: CoordinatesRequest
     ) -> GetAllWeatherForecastResponse:
         response_client = (
@@ -63,7 +63,7 @@ class ForecastWeatherService:
             list_wather.append(response_repository)
         return GetAllWeatherForecastResponse(weathers=list_wather)
 
-    async def get_forecast_weather_by_city(
+    async def post_forecast_weather_by_city(
         self, authuser: AuthUser, db: AsyncSession, city: str
     ) -> GetAllWeatherForecastResponse:
         response_client = await self.open_weather_client.get_forecast_weather_by_city(

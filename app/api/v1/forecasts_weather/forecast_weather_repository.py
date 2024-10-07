@@ -77,7 +77,6 @@ class ForecastWeatherRepository:
         forecast_weather.humidity = data.humidity if data.humidity else forecast_weather.humidity  # type: ignore
         forecast_weather.wind_speed = data.wind_speed if data.wind_speed else forecast_weather.wind_speed  # type: ignore
         forecast_weather.weather_description = data.weather_description if data.weather_description else forecast_weather.weather_description  # type: ignore
-        forecast_weather.user_id = data.user_id if data.user_id else forecast_weather.user_id  # type: ignore
         db.commit()
         db.refresh(forecast_weather)
         return forecast_weather

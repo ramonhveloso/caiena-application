@@ -28,7 +28,7 @@ class CurrentWeatherService:
         self.current_weather_repository = current_weather_repository
         self.open_weather_client = current_weather_client
 
-    async def get_current_weather_by_coordinates(
+    async def post_current_weather_by_coordinates(
         self, authuser: AuthUser, db: AsyncSession, coordinates: CoordinatesRequest
     ) -> GetWeatherCurrentResponse:
         response_client = (
@@ -66,7 +66,7 @@ class CurrentWeatherService:
             user_id=int(weather.user_id),
         )
 
-    async def get_current_weather_by_city(
+    async def post_current_weather_by_city(
         self, authuser: AuthUser, db: AsyncSession, city: str
     ) -> GetWeatherCurrentResponse:
         response_client = await self.open_weather_client.get_current_weather_by_city(
