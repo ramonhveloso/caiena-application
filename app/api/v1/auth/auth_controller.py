@@ -25,7 +25,6 @@ router = APIRouter()
 auth_service = AuthService(AuthRepository())
 
 
-# Registro de novo usuário
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
 async def post_signup(
     data: PostSignUpRequest, db: AsyncSession = Depends(get_db)
@@ -33,8 +32,6 @@ async def post_signup(
     response_service = await auth_service.create_user(db=db, data=data)
     return PostSignUpResponse.model_validate(response_service)
 
-
-# Login do usuário
 @router.post("/login")
 async def post_login(
     data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
@@ -43,8 +40,6 @@ async def post_login(
     response_service = auth_service.create_access_token(authenticated_user)
     return PostLoginResponse.model_validate(response_service)
 
-
-# Logout do usuário
 @router.post("/logout")
 async def post_logout(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
@@ -53,8 +48,6 @@ async def post_logout(
     response_service = await auth_service.logout(db=db, authuser=authuser)
     return PostLogoutResponse.model_validate(response_service)
 
-
-# Solicitar recuperação de senha
 @router.post("/forgot-password")
 async def post_forgot_password(
     data: PostForgotPasswordRequest, db: AsyncSession = Depends(get_db)
@@ -62,8 +55,6 @@ async def post_forgot_password(
     response_service = await auth_service.forgot_password(db=db, data=data)
     return PostForgotPasswordResponse.model_validate(response_service)
 
-
-# Resetar senha
 @router.post("/reset-password")
 async def post_reset_password(
     data: PostResetPasswordRequest, db: AsyncSession = Depends(get_db)
@@ -71,8 +62,6 @@ async def post_reset_password(
     response_service = await auth_service.reset_password(db=db, data=data)
     return PostResetPasswordResponse.model_validate(response_service)
 
-
-# Alterar senha
 @router.put("/change-password")
 async def put_change_password(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
@@ -84,8 +73,6 @@ async def put_change_password(
     )
     return PutChangePasswordResponse.model_validate(response_service)
 
-
-# Verificar dados do usuário autenticado
 @router.get("/me")
 async def get_me(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],

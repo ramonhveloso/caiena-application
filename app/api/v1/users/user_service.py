@@ -39,7 +39,6 @@ class UserService:
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        # Atualizar o perfil do usuário
         updated_user = await self.user_repository.update_user_profile(db, user, data)
         return PutUsersMeResponse(
             id=updated_user.id,
@@ -68,7 +67,6 @@ class UserService:
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        # Atualizar dados do usuário
         updated_user = await self.user_repository.update_user(db, user, data)
         return PutUserResponse(
             id=updated_user.id,
@@ -81,8 +79,7 @@ class UserService:
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        # Excluir usuário
-        deleted_user = await self.user_repository.delete_user(db, user)
+        deleted_user = await self.user_repository.delete_user(db=db, user_id=user_id)
         return DeleteUserResponse(
             id=deleted_user.id,
             email=deleted_user.email,

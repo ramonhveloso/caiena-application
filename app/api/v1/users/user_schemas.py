@@ -3,7 +3,6 @@ from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
 
-# Obter perfil do usuário autenticado
 class GetUsersMeResponse(BaseModel):
     id: int
     email: EmailStr
@@ -19,7 +18,6 @@ class GetUsersMeResponse(BaseModel):
         return cls(**data)
 
 
-# Atualizar perfil do usuário autenticado
 class PutUsersMeRequest(BaseModel):
     name: Optional[str]
     email: Optional[EmailStr]
@@ -49,7 +47,6 @@ class PutUsersMeResponse(BaseModel):
         return cls(**data)
 
 
-# (Admin) Listar usuários
 class User(BaseModel):
     id: int
     email: EmailStr
@@ -79,7 +76,6 @@ class GetUsersResponse(BaseModel):
         return cls(**data)
 
 
-# Ver perfil de um usuário específico
 class GetUserResponse(BaseModel):
     id: int
     email: EmailStr
@@ -95,7 +91,6 @@ class GetUserResponse(BaseModel):
         return cls(**data)
 
 
-# Atualizar dados de um usuário específico
 class PutUserRequest(BaseModel):
     name: Optional[str]
     email: Optional[EmailStr]
@@ -125,7 +120,6 @@ class PutUserResponse(BaseModel):
         return cls(**data)
 
 
-# Excluir um usuário específico
 class DeleteUserResponse(BaseModel):
     id: int
     email: EmailStr
