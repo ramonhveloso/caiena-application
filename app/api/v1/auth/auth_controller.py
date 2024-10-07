@@ -32,6 +32,7 @@ async def post_signup(
     response_service = await auth_service.create_user(db=db, data=data)
     return PostSignUpResponse.model_validate(response_service)
 
+
 @router.post("/login")
 async def post_login(
     data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
@@ -39,6 +40,7 @@ async def post_login(
     authenticated_user = await auth_service.authenticate_user(db=db, data=data)
     response_service = auth_service.create_access_token(authenticated_user)
     return PostLoginResponse.model_validate(response_service)
+
 
 @router.post("/logout")
 async def post_logout(
@@ -48,6 +50,7 @@ async def post_logout(
     response_service = await auth_service.logout(db=db, authuser=authuser)
     return PostLogoutResponse.model_validate(response_service)
 
+
 @router.post("/forgot-password")
 async def post_forgot_password(
     data: PostForgotPasswordRequest, db: AsyncSession = Depends(get_db)
@@ -55,12 +58,14 @@ async def post_forgot_password(
     response_service = await auth_service.forgot_password(db=db, data=data)
     return PostForgotPasswordResponse.model_validate(response_service)
 
+
 @router.post("/reset-password")
 async def post_reset_password(
     data: PostResetPasswordRequest, db: AsyncSession = Depends(get_db)
 ) -> PostResetPasswordResponse:
     response_service = await auth_service.reset_password(db=db, data=data)
     return PostResetPasswordResponse.model_validate(response_service)
+
 
 @router.put("/change-password")
 async def put_change_password(
@@ -72,6 +77,7 @@ async def put_change_password(
         db=db, authuser=authuser, data=data
     )
     return PutChangePasswordResponse.model_validate(response_service)
+
 
 @router.get("/me")
 async def get_me(

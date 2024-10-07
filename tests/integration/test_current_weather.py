@@ -20,12 +20,15 @@ async def test_post_weather_current_by_coordinates(use_test_client):
 
     headers = {"Authorization": f"Bearer {access_token}"}
     params = {"latitude": -23.5505, "longitude": -46.6333}
-    get_weather_current_response = use_test_client.post("/api/v1/current-weather/coordinates", params=params, headers=headers)
+    get_weather_current_response = use_test_client.post(
+        "/api/v1/current-weather/coordinates", params=params, headers=headers
+    )
     assert get_weather_current_response.status_code == 201
 
     response_json = get_weather_current_response.json()
 
     assert response_json["city"] == "Liberdade"
+
 
 @pytest.mark.asyncio
 async def test_post_weather_current_by_city(use_test_client):
@@ -45,13 +48,16 @@ async def test_post_weather_current_by_city(use_test_client):
     access_token = login_response.json()["access_token"]
 
     headers = {"Authorization": f"Bearer {access_token}"}
-    city= "Liberdade"
-    get_weather_current_response = use_test_client.post(f"/api/v1/current-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_current_response = use_test_client.post(
+        f"/api/v1/current-weather/{city}", headers=headers
+    )
     assert get_weather_current_response.status_code == 201
 
     response_json = get_weather_current_response.json()
 
     assert response_json["city"] == "Liberdade"
+
 
 @pytest.mark.asyncio
 async def test_get_all_weather_current_by_user(use_test_client):
@@ -77,14 +83,20 @@ async def test_get_all_weather_current_by_user(use_test_client):
     response_json = get_me_response.json()
     user_id = response_json["id"]
 
-    get_weather_current_response = use_test_client.get(f"/api/v1/current-weather/user/{user_id}")
+    get_weather_current_response = use_test_client.get(
+        f"/api/v1/current-weather/user/{user_id}"
+    )
     assert get_weather_current_response.status_code == 404
 
-    city= "Liberdade"
-    get_weather_current_response = use_test_client.post(f"/api/v1/current-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_current_response = use_test_client.post(
+        f"/api/v1/current-weather/{city}", headers=headers
+    )
     assert get_weather_current_response.status_code == 201
 
-    get_weather_current_response = use_test_client.get(f"/api/v1/current-weather/user/{user_id}")
+    get_weather_current_response = use_test_client.get(
+        f"/api/v1/current-weather/user/{user_id}"
+    )
     assert get_weather_current_response.status_code == 200
 
 
@@ -111,8 +123,10 @@ async def test_put_weather_current(use_test_client):
     response_json = get_me_response.json()
 
     user_id = response_json["id"]
-    city= "Liberdade"
-    get_weather_current_response = use_test_client.post(f"/api/v1/current-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_current_response = use_test_client.post(
+        f"/api/v1/current-weather/{city}", headers=headers
+    )
     assert get_weather_current_response.status_code == 201
 
     response_json = get_weather_current_response.json()
@@ -140,9 +154,11 @@ async def test_put_weather_current(use_test_client):
         "observation_datetime": "2024-10-07T15:38:39",
         "sunrise": "2024-10-07T15:38:39",
         "sunset": "2024-10-07T15:38:39",
-        "user_id": user_id
+        "user_id": user_id,
     }
-    put_weather_current_response = use_test_client.put(f"/api/v1/current-weather/{id}", headers=headers, json=json_request)
+    put_weather_current_response = use_test_client.put(
+        f"/api/v1/current-weather/{id}", headers=headers, json=json_request
+    )
     assert put_weather_current_response.status_code == 200
 
     response_json = put_weather_current_response.json()
@@ -166,8 +182,10 @@ async def test_delete_weather_current(use_test_client):
     access_token = login_response.json()["access_token"]
 
     headers = {"Authorization": f"Bearer {access_token}"}
-    city= "Liberdade"
-    get_weather_current_response = use_test_client.post(f"/api/v1/current-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_current_response = use_test_client.post(
+        f"/api/v1/current-weather/{city}", headers=headers
+    )
     assert get_weather_current_response.status_code == 201
 
     response_json = get_weather_current_response.json()
@@ -175,12 +193,9 @@ async def test_delete_weather_current(use_test_client):
     assert response_json["city"] == "Liberdade"
     id = response_json["id"]
 
-    delete_weather_current_response = use_test_client.delete(f"/api/v1/current-weather/{id}", headers=headers)
+    delete_weather_current_response = use_test_client.delete(
+        f"/api/v1/current-weather/{id}", headers=headers
+    )
     assert delete_weather_current_response.status_code == 200
 
     response_json = delete_weather_current_response.json()
-
-
-
-    
-

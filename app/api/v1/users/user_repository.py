@@ -26,11 +26,9 @@ class UserRepository:
         db.commit()
         db.refresh(user)
         return user
-    
+
     async def delete_user(self, db: Session, user_id: int):
-        user_entry = (
-            db.query(User).filter(User.id == user_id).first()
-        )
+        user_entry = db.query(User).filter(User.id == user_id).first()
         if user_entry:
             db.delete(user_entry)
             db.commit()

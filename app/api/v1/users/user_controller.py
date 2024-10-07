@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Security
+from fastapi import APIRouter, Depends, Security
 from sqlalchemy.orm import Session
 
 from app.api.v1.users.user_repository import UserRepository
@@ -20,6 +20,7 @@ from app.middleware.dependencies import AuthUser, get_db, jwt_middleware
 router = APIRouter()
 user_service = UserService(UserRepository())
 
+
 @router.get("/me")
 async def get_users_me(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
@@ -29,6 +30,7 @@ async def get_users_me(
         db=db, authuser=authuser
     )
     return GetUsersMeResponse.model_validate(response_service)
+
 
 @router.put("/me")
 async def put_users_me(
@@ -41,6 +43,7 @@ async def put_users_me(
     )
     return PutUsersMeResponse.model_validate(response_service)
 
+
 @router.get("/")
 async def get_users(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
@@ -48,6 +51,7 @@ async def get_users(
 ) -> GetUsersResponse:
     response_service = await user_service.get_all_users(db)
     return GetUsersResponse.model_validate(response_service)
+
 
 @router.get("/{user_id}")
 async def get_user(
@@ -58,6 +62,7 @@ async def get_user(
     response_service = await user_service.get_user_by_id(db=db, user_id=user_id)
     return GetUserResponse.model_validate(response_service)
 
+
 @router.put("/{user_id}")
 async def put_user(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
@@ -67,6 +72,7 @@ async def put_user(
 ) -> PutUserResponse:
     response_service = await user_service.update_user(db=db, user_id=user_id, data=data)
     return PutUserResponse.model_validate(response_service)
+
 
 @router.delete("/{user_id}")
 async def delete_user(

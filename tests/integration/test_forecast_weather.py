@@ -20,10 +20,12 @@ async def test_post_weather_forecast_by_coordinates(use_test_client):
 
     headers = {"Authorization": f"Bearer {access_token}"}
     params = {"latitude": -23.5505, "longitude": -46.6333}
-    get_weather_forecast_response = use_test_client.post("/api/v1/forecast-weather/coordinates", params=params, headers=headers)
+    get_weather_forecast_response = use_test_client.post(
+        "/api/v1/forecast-weather/coordinates", params=params, headers=headers
+    )
     assert get_weather_forecast_response.status_code == 201
 
-    response_json = get_weather_forecast_response.json()
+    get_weather_forecast_response.json()
 
 
 @pytest.mark.asyncio
@@ -44,11 +46,13 @@ async def test_post_weather_forecast_by_city(use_test_client):
     access_token = login_response.json()["access_token"]
 
     headers = {"Authorization": f"Bearer {access_token}"}
-    city= "Liberdade"
-    get_weather_forecast_response = use_test_client.post(f"/api/v1/forecast-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_forecast_response = use_test_client.post(
+        f"/api/v1/forecast-weather/{city}", headers=headers
+    )
     assert get_weather_forecast_response.status_code == 201
 
-    response_json = get_weather_forecast_response.json()
+    get_weather_forecast_response.json()
 
 
 @pytest.mark.asyncio
@@ -75,14 +79,20 @@ async def test_get_all_weather_forecast_by_user(use_test_client):
     response_json = get_me_response.json()
     user_id = response_json["id"]
 
-    get_weather_forecast_response = use_test_client.get(f"/api/v1/forecast-weather/user/{user_id}")
+    get_weather_forecast_response = use_test_client.get(
+        f"/api/v1/forecast-weather/user/{user_id}"
+    )
     assert get_weather_forecast_response.status_code == 404
 
-    city= "Liberdade"
-    get_weather_forecast_response = use_test_client.post(f"/api/v1/forecast-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_forecast_response = use_test_client.post(
+        f"/api/v1/forecast-weather/{city}", headers=headers
+    )
     assert get_weather_forecast_response.status_code == 201
 
-    get_weather_forecast_response = use_test_client.get(f"/api/v1/forecast-weather/user/{user_id}")
+    get_weather_forecast_response = use_test_client.get(
+        f"/api/v1/forecast-weather/user/{user_id}"
+    )
     assert get_weather_forecast_response.status_code == 200
 
 
@@ -104,14 +114,16 @@ async def test_put_weather_forecast(use_test_client):
     access_token = login_response.json()["access_token"]
 
     headers = {"Authorization": f"Bearer {access_token}"}
-    city= "Liberdade"
-    get_weather_forecast_response = use_test_client.post(f"/api/v1/forecast-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_forecast_response = use_test_client.post(
+        f"/api/v1/forecast-weather/{city}", headers=headers
+    )
     assert get_weather_forecast_response.status_code == 201
 
     response_json = get_weather_forecast_response.json()
 
     id = int(response_json["weathers"][0]["id"])
-    
+
     json_request = {
         "id": id,
         "city": "Curitiba",
@@ -123,9 +135,11 @@ async def test_put_weather_forecast(use_test_client):
         "max_temperature": 12.76,
         "weather_description": "nublado",
         "humidity": 86,
-        "wind_speed": 2.45
+        "wind_speed": 2.45,
     }
-    put_weather_forecast_response = use_test_client.put(f"/api/v1/forecast-weather/{id}", headers=headers, json=json_request)
+    put_weather_forecast_response = use_test_client.put(
+        f"/api/v1/forecast-weather/{id}", headers=headers, json=json_request
+    )
     assert put_weather_forecast_response.status_code == 200
 
     response_json = put_weather_forecast_response.json()
@@ -149,16 +163,19 @@ async def test_delete_weather_forecast(use_test_client):
     access_token = login_response.json()["access_token"]
 
     headers = {"Authorization": f"Bearer {access_token}"}
-    city= "Liberdade"
-    get_weather_forecast_response = use_test_client.post(f"/api/v1/forecast-weather/{city}", headers=headers)
+    city = "Liberdade"
+    get_weather_forecast_response = use_test_client.post(
+        f"/api/v1/forecast-weather/{city}", headers=headers
+    )
     assert get_weather_forecast_response.status_code == 201
 
     response_json = get_weather_forecast_response.json()
 
     id = int(response_json["weathers"][0]["id"])
 
-    delete_weather_forecast_response = use_test_client.delete(f"/api/v1/forecast-weather/{id}", headers=headers)
+    delete_weather_forecast_response = use_test_client.delete(
+        f"/api/v1/forecast-weather/{id}", headers=headers
+    )
     assert delete_weather_forecast_response.status_code == 200
 
     response_json = delete_weather_forecast_response.json()
-
