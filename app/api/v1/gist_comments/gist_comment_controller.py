@@ -1,78 +1,79 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Security
+from fastapi import APIRouter, Depends, Security, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.v1.current_weather.current_weather_repository import CurrentWeatherRepository
+from app.api.v1.forecasts_weather.forecast_weather_repository import ForecastWeatherRepository
 from app.api.v1.gist_comments.gist_comment_repository import GistCommentRepository
 from app.api.v1.gist_comments.gist_comment_schemas import (
     CoordinatesRequest,
+    DeleteGistCommentResponse,
+    GetAllGistCommentResponse,
     GistCommentResponse,
+    PutGistCommentRequest,
+    PutGistCommentResponse,
 )
 from app.api.v1.gist_comments.gist_comment_service import CommentService
+from app.clients.github.github_client import GitHubClient
 from app.clients.http_client import HttpClient
 from app.clients.open_weather.open_weather_client import OpenWeatherClient
 from app.middleware.dependencies import AuthUser, get_db, jwt_middleware
 
 router = APIRouter()
-weather_service = CommentService(
-    GistCommentRepository(), OpenWeatherClient(HttpClient())
+gist_comment_service = CommentService(
+    GistCommentRepository(), 
+    CurrentWeatherRepository(),
+    ForecastWeatherRepository(),
+    OpenWeatherClient(HttpClient()),
+    GitHubClient()
 )
 
-
-# Obter clima atual
-@router.post("/current/coordinates")
-async def post_weather_current_by_city(
+@router.post("/coordinates", status_code=status.HTTP_201_CREATED)
+async def post_gist_comment_by_city(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     coordinates: CoordinatesRequest = Depends(),
     db: AsyncSession = Depends(get_db),
 ) -> GistCommentResponse:
-    response_service = await weather_service.post_gist_comment_by_coordinates(
+    response_service = await gist_comment_service.post_gist_comment_by_coordinates(
         authuser=authuser, db=db, coordinates=coordinates
     )
     return GistCommentResponse.model_validate(response_service)
 
+@router.post("/{city}", status_code=status.HTTP_201_CREATED)
+async def get_gist_comment_by_city(
+    authuser: Annotated[AuthUser, Security(jwt_middleware)],
+    city: str,
+    db: AsyncSession = Depends(get_db),
+) -> GistCommentResponse:
+    response_service = await gist_comment_service.post_gist_comment_by_city(authuser=authuser, db=db, city=city)
+    return GistCommentResponse.model_validate(response_service)
 
-# # Obter clima atual
-# @router.post("/current/{city}")
-# async def get_weather_current_by_city(
-#     authuser: Annotated[AuthUser, Security(jwt_middleware)],
-#     city: str,
-#     db: AsyncSession = Depends(get_db),
-# ) -> GetWeatherCurrentResponse:
-#     response_service = await weather_service.get_gist_comment_by_city(authuser=authuser, db=db, city=city)
-#     return GetWeatherCurrentResponse.model_validate(response_service)
+@router.get("/user/{user_id}")
+async def get_gist_comments_by_user(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+) -> GetAllGistCommentResponse:
+    response_service = await gist_comment_service.get_all_gist_comment_by_user(db=db, user_id=user_id)
+    return GetAllGistCommentResponse.model_validate(response_service)
 
+@router.put("/{comment_id}")
+async def put_gist_comment(
+    comment_id: int,
+    data: PutGistCommentRequest,
+    authuser: Annotated[AuthUser, Security(jwt_middleware)],
+    db: AsyncSession = Depends(get_db),
+) -> PutGistCommentResponse:
+    response_service = await gist_comment_service.update_gist_comment(
+        db=db, comment_id=comment_id, data=data
+    )
+    return PutGistCommentResponse.model_validate(response_service)
 
-# # Obter climas cadastrados por usuário
-# @router.get("/current/user/{user_id}")
-# async def get_weather_current_by_user(
-#     user_id: int,
-#     db: AsyncSession = Depends(get_db),
-# ) -> GetAllWeatherCurrentResponse:
-#     response_service = await weather_service.get_all_gist_comment_by_user(db=db, user_id=user_id)
-#     return GetAllWeatherCurrentResponse.model_validate(response_service)
-
-
-# # Atualizar clima atual
-# @router.put("/current/{id}")
-# async def put_weather_current(
-#     id: int,
-#     data: PutWeatherCurrentRequest,
-#     authuser: Annotated[AuthUser, Security(jwt_middleware)],
-#     db: AsyncSession = Depends(get_db),
-# ) -> PutWeatherCurrentResponse:
-#     response_service = await weather_service.update_gist_comment(
-#         db=db, weather_id=id, data=data
-#     )
-#     return PutWeatherCurrentResponse.model_validate(response_service)
-
-
-# # Excluir clima atual
-# @router.delete("/current/{id}")
-# async def delete_weather_current(
-#     id: int,
-#     authuser: Annotated[AuthUser, Security(jwt_middleware)],
-#     db: AsyncSession = Depends(get_db),
-# ) -> DeleteWeatherCurrentResponse:
-#     response_service = await weather_service.delete_gist_comment(db=db, weather_id=id)
-#     return DeleteWeatherCurrentResponse.model_validate(response_service)
+@router.delete("/{comment_id}")
+async def delete_gist_comment(
+    comment_id: int,
+    authuser: Annotated[AuthUser, Security(jwt_middleware)],
+    db: AsyncSession = Depends(get_db),
+) -> DeleteGistCommentResponse:
+    response_service = await gist_comment_service.delete_gist_comment(db=db, comment_id=comment_id)
+    return DeleteGistCommentResponse.model_validate(response_service)

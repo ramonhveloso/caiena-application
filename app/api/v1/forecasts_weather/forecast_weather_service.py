@@ -36,6 +36,9 @@ class ForecastWeatherService:
                 coordinates=coordinates
             )
         )
+        if not response_client:
+            raise HTTPException(status_code=404, detail="Weather not found")
+        
         city = response_client.city.name
         latitude = response_client.city.coord.lat
         longitude = response_client.city.coord.lon
@@ -67,6 +70,9 @@ class ForecastWeatherService:
                 coordinates=coordinates
             )
         )
+        if not response_client:
+            raise HTTPException(status_code=404, detail="Weather not found")
+        
         city = response_client.city.name
         latitude = response_client.city.coord.lat
         longitude = response_client.city.coord.lon
@@ -96,6 +102,9 @@ class ForecastWeatherService:
         response_client = await self.open_weather_client.get_forecast_weather_by_city(
             city=city
         )
+        if not response_client:
+            raise HTTPException(status_code=404, detail="Weather not found")
+        
         city = response_client.city.name
         latitude = response_client.city.coord.lat
         longitude = response_client.city.coord.lon
@@ -125,6 +134,9 @@ class ForecastWeatherService:
         weathers = await self.forecast_weather_repository.get_all_weathers_by_user_id(
             db, user_id
         )
+        if not weathers:
+            raise HTTPException(status_code=404, detail="Weather not found")
+        
         weathers_list = [
             GetWeatherForecastResponse(
                 id=int(weather.id),
@@ -180,7 +192,6 @@ class ForecastWeatherService:
         if not weather:
             raise HTTPException(status_code=404, detail="Weather not found")
 
-        # Excluir registro de clima atual
         await self.forecast_weather_repository.delete(db, weather.id)
         return DeleteWeatherForecastResponse(
             id=int(weather.id),

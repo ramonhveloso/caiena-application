@@ -25,7 +25,7 @@ weather_service = CurrentWeatherService(
 )
 
 
-@router.get("/current/coordinates")
+@router.get("/coordinates")
 async def get_weather_current_by_city(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],    coordinates: CoordinatesRequest = Depends(),
     db: AsyncSession = Depends(get_db),
@@ -36,7 +36,7 @@ async def get_weather_current_by_city(
     return GetWeatherCurrentResponse.model_validate(response_service)
 
 
-@router.get("/current/{city}")
+@router.get("/{city}")
 async def get_weather_current_by_city(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     city: str,
@@ -48,7 +48,7 @@ async def get_weather_current_by_city(
     return GetWeatherCurrentResponse.model_validate(response_service)
 
 
-@router.get("/current/user/{user_id}")
+@router.get("/user/{user_id}")
 async def get_weather_current_by_user(
     user_id: int,
     db: AsyncSession = Depends(get_db),
@@ -59,7 +59,7 @@ async def get_weather_current_by_user(
     return GetAllWeatherCurrentResponse.model_validate(response_service)
 
 
-@router.put("/current/{id}")
+@router.put("/{id}")
 async def put_weather_current(
     id: int,
     data: PutWeatherCurrentRequest,
@@ -72,7 +72,7 @@ async def put_weather_current(
     return PutWeatherCurrentResponse.model_validate(response_service)
 
 
-@router.delete("/current/{id}")
+@router.delete("/{id}")
 async def delete_weather_current(
     id: int,
     authuser: Annotated[AuthUser, Security(jwt_middleware)],

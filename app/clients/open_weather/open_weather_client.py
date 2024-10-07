@@ -33,7 +33,6 @@ class OpenWeatherClient:
         return GetCurrentWeatherResponse(**response.json())
 
     async def get_current_weather_by_city(self, city: str) -> GetCurrentWeatherResponse:
-        f"{str(self.base_url)}weather"
         response = await self.http_client.make_request(
             self.current_weather_url,
             "GET",

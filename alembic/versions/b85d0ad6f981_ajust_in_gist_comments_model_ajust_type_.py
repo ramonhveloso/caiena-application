@@ -1,8 +1,8 @@
-"""Ajust in user model
+"""Ajust in gist_comments model ajust type comment_id
 
-Revision ID: 7b70da5c7d62
+Revision ID: b85d0ad6f981
 Revises: 
-Create Date: 2024-10-06 03:00:49.942468
+Create Date: 2024-10-07 01:54:41.004196
 
 """
 from typing import Sequence, Union
@@ -14,7 +14,7 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision: str = '7b70da5c7d62'
+revision: str = 'b85d0ad6f981'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

@@ -7,6 +7,7 @@ class Environment(BaseModel):
     TEST_DATABASE_URL: str
     SECRET_KEY: str
     SECRET_KEY_GITHUB: str
+    GIST_ID: str
     SECRET_KEY_OPEN_WEATHER: str
     SMTP_SERVER: str
     SMTP_PORT: int

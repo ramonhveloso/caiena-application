@@ -139,6 +139,8 @@ class AuthService:
         if not id:
             raise HTTPException(status_code=401, detail="Invalid token")
         user = await self.auth_repository.get_user_by_id(db, id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
         return GetAuthMeResponse(
             username=user.username,
             email=user.email,

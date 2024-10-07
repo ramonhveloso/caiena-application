@@ -134,6 +134,9 @@ class CurrentWeatherService:
         weathers = await self.current_weather_repository.get_all_weathers_by_user_id(
             db, user_id
         )
+        if not weathers:
+            raise HTTPException(status_code=404, detail="Weather not found")
+        
         weathers_list = [
             GetWeatherCurrentResponse(
                 id=int(weather.id),
@@ -211,7 +214,11 @@ class CurrentWeatherService:
         if not weather:
             raise HTTPException(status_code=404, detail="Weather not found")
 
-        await self.current_weather_repository.delete(db, weather.id)
+        try:
+            await self.current_weather_repository.delete(db, weather.id)
+        except Exception:
+            raise HTTPException(status_code=409, detail="Error deleting weather")
+        
         return DeleteWeatherCurrentResponse(
             id=int(weather.id),
             city=str(weather.city),

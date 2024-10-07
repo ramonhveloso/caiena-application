@@ -10,7 +10,10 @@ class GistComment(Base):
     __tablename__ = "gist_comments"
 
     id = Column(Integer, primary_key=True, index=True)
+    comment_id = Column(Integer, nullable=False)
     city = Column(String, nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
     comment_date = Column(DateTime, default=datetime.now(), nullable=False)
     current_temperature = Column(Float, nullable=False)
     weather_description = Column(String, nullable=False)

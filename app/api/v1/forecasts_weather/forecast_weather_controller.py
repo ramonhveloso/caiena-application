@@ -24,7 +24,7 @@ weather_service = ForecastWeatherService(
 )
 
 
-@router.get("/forecast/coordinates")
+@router.get("/coordinates")
 async def get_weather_forecast_by_coordinates(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     coordinates: CoordinatesRequest = Depends(),
@@ -36,7 +36,7 @@ async def get_weather_forecast_by_coordinates(
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
 
-@router.get("/forecast/coordinates/daily")
+@router.get("/coordinates/daily")
 async def get_weather_forecast_by_coordinates(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     coordinates: CoordinatesRequest = Depends(),
@@ -48,7 +48,7 @@ async def get_weather_forecast_by_coordinates(
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
 
-@router.get("/forecast/{city}")
+@router.get("/{city}")
 async def get_weather_forecast_by_city(
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
     city: str,
@@ -60,7 +60,7 @@ async def get_weather_forecast_by_city(
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
 
-@router.get("/forecast/user/{user_id}")
+@router.get("/user/{user_id}")
 async def get_weather_forecast_by_user(
     user_id: int,
     db: AsyncSession = Depends(get_db),
@@ -71,7 +71,7 @@ async def get_weather_forecast_by_user(
     return GetAllWeatherForecastResponse.model_validate(response_service)
 
 
-@router.put("/forecast/{id}")
+@router.put("/{id}")
 async def put_weather_forecast(
     id: int,
     data: PutWeatherForecastRequest,
@@ -84,7 +84,7 @@ async def put_weather_forecast(
     return PutWeatherForecastResponse.model_validate(response_service)
 
 
-@router.delete("/forecast/{id}")
+@router.delete("/{id}")
 async def delete_weather_forecast(
     id: int,
     authuser: Annotated[AuthUser, Security(jwt_middleware)],
